@@ -54,6 +54,7 @@ WORKDIR $PYSETUP_PATH
 RUN poetry install --no-root
 
 WORKDIR /app
+COPY . .
 
 EXPOSE 8000
 ENTRYPOINT /docker-entrypoint.sh $0 $@
