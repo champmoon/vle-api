@@ -9,7 +9,7 @@ packages = [{ include = "vle_api" }]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.85.0"
-SQLAlchemy = "^1.4.41"
+SQLAlchemy = {extras = ["mypy"], version = "^1.4.41"}
 alembic = "^1.8.1"
 asyncpg = "^0.26.0"
 uvicorn = { extras = ["standard"], version = "^0.18.3" }
