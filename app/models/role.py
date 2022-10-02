@@ -10,7 +10,7 @@ class Role(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
-    name = Column(String, unique=True)
+    name = Column(String, unique=True, nullable=False)
 
     @validates("name")
     def validate_role(self, col_name: str, col_value: str) -> str | ValueError:
