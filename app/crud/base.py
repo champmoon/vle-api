@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base_class import Base
 
-ModelType = TypeVar("ModelType", bound=Base)
+ModelType = TypeVar("ModelType", bound=Base)  # type: ignore
 CreateSchemeType = TypeVar("CreateSchemeType", bound=BaseModel)
 UpdateSchemeType = TypeVar("UpdateSchemeType", bound=BaseModel)
 
@@ -31,7 +31,7 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
         self, session: AsyncSession, obj_in: CreateSchemeType
     ) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)  # type: ignore
+        db_obj = self.model(**obj_in_data)
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
