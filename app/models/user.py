@@ -17,6 +17,6 @@ class User(Base):
     surname = Column(String, nullable=False)
     patronymic = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=True)
-    is_active = Column(Boolean(), default=True)
+    is_active = Column(Boolean(), default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     role_id = Column(UUID(as_uuid=True), ForeignKey("role.id", ondelete="CASCADE"))
