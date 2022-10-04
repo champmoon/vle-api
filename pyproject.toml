@@ -13,6 +13,8 @@ SQLAlchemy = {extras = ["mypy"], version = "^1.4.41"}
 alembic = "^1.8.1"
 asyncpg = "^0.26.0"
 uvicorn = { extras = ["standard"], version = "^0.18.3" }
+passlib = "^1.7.4"
+pydantic = {extras = ["email"], version = "^1.10.2"}
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
