@@ -20,6 +20,16 @@ async def read_user(id: UUID, session: AsyncSession = Depends(deps.get_session))
         raise user.GetUserIdError
 
 
+@router.get("/{username}/username", response_model=schemas.User)
+async def read_user_by_username(
+    username: str, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    user_out = await crud.user.get_by_username(session=session, username=username)
+    if user_out is None:
+        raise user.GetUsernameError
+    return user_out
+
+
 @router.get("/", response_model=list[schemas.User])
 async def read_users(
     skip: int = 0, limit: int = 100, session: AsyncSession = Depends(deps.get_session)

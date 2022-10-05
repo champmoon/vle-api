@@ -27,3 +27,11 @@ class CreateUniqueEmailError(HTTPException):
         kwargs["detail"] = details.CREATE_UNIQUE_EMAIL_ERROR
 
         super().__init__(*args, **kwargs)
+
+
+class GetUsernameError(HTTPException):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs["status_code"] = status.HTTP_404_NOT_FOUND
+        kwargs["detail"] = details.GET_USERNAME_ERROR
+
+        super().__init__(*args, **kwargs)

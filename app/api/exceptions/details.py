@@ -1,6 +1,7 @@
 # Exception messages for users
 
 GET_USER_ID_ERROR = "No user with this id"
+GET_USERNAME_ERROR = "No user with this username"
 
 CREATE_UNIQUE_USERNAME_ERROR = "Already exists user with this username"
 CREATE_UNIQUE_EMAIL_ERROR = "Already exists user with this email"
