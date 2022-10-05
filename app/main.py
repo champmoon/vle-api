@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.endpoints import api_router
+from app.api.api_v1.api import api_router
 
 app = FastAPI(
     title="vle-api", description="Virtual Learning Environment API", version="0.1.0"

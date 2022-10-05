@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
-from app.api.exceptions import details, user
+from app.api.api_v1.exceptions import details, user
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter()
 
 
 @router.get("/{id}", response_model=schemas.User)

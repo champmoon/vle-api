@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud, schemas
 from app.api import deps
 
-router = APIRouter(prefix="/role", tags=["role"])
+router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.Role])

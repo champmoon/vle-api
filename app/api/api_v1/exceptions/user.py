@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from app.api.exceptions import details
+from app.api.api_v1.exceptions import details
 
 
 class GetUserIdError(HTTPException):
