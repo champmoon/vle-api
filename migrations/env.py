@@ -31,7 +31,7 @@ load_dotenv()
 
 from app.core.settings import settings  # noqa
 
-db_uri = settings.SQLALCHEMY_DATABASE_URI
+db_uri = settings.ASYNC_SQLALCHEMY_DATABASE_URI
 
 
 def run_migrations_offline() -> None:
@@ -71,9 +71,9 @@ async def run_migrations_online() -> None:
         with context.begin_transaction():
             context.run_migrations()
 
-    from app.db.session import engine  # noqa
+    from app.db.session import async_engine  # noqa
 
-    async with engine.connect() as connection:
+    async with async_engine.connect() as connection:
         await connection.run_sync(do_migrations)
 
 

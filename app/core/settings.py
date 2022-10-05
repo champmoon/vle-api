@@ -10,9 +10,9 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: str
 
-    SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
+    ASYNC_SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
 
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    @validator("ASYNC_SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: str | None, values: dict[str, str]) -> str:
         if isinstance(v, str):
             return v
