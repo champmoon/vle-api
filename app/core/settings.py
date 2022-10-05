@@ -25,6 +25,9 @@ class Settings(BaseSettings):
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
 
+    FIRST_ADMIN_USERNAME: str
+    FIRST_ADMIN_PASSWORD: str
+
     @classmethod
     def from_env(cls) -> Settings:
         return cls.parse_obj({})

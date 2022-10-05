@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import role
@@ -49,6 +50,14 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data["hashed_password"] = hashed_password
 
         return await super().update(session=session, db_obj=db_obj, obj_in=update_data)
+
+    async def get_by_username(
+        self, session: AsyncSession, username: str
+    ) -> User | None:
+        user = await session.execute(
+            select(self.model).where(self.model.username == username)
+        )
+        return user.scalars().first()
 
 
 user = CRUDUser(User)
