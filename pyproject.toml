@@ -15,6 +15,7 @@ asyncpg = "^0.26.0"
 uvicorn = { extras = ["standard"], version = "^0.18.3" }
 passlib = "^1.7.4"
 pydantic = {extras = ["email"], version = "^1.10.2"}
+tenacity = "^8.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
