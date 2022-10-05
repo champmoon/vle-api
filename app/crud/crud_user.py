@@ -26,7 +26,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         obj_in_data["created_at"] = datetime.utcnow()
         obj_in_data["role_id"] = role_obj.id
 
-        db_obj = User(**obj_in_data)  # type: ignore
+        db_obj = User(**obj_in_data)
 
         session.add(db_obj)
         await session.commit()
