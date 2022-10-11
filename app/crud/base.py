@@ -17,9 +17,9 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
     def __init__(self, model: Type[ModelType]) -> None:
         self.model = model
 
-    async def get(self, session: AsyncSession, id: UUID) -> ModelType:
+    async def get(self, session: AsyncSession, id: UUID) -> ModelType | None:
         obj = await session.execute(select(self.model).where(self.model.id == id))
-        return obj.scalar_one()
+        return obj.scalars().first()
 
     async def get_multi(
         self, session: AsyncSession, skip: int = 0, limit: int = 100
@@ -60,7 +60,7 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
 
     async def remove(self, session: AsyncSession, id: UUID) -> ModelType:
         obj = await session.execute(select(self.model).where(self.model.id == id))
-        one_obj = obj.scalar_one()
+        one_obj = obj.scalars().first()
         await session.delete(one_obj)
         await session.commit()
         return one_obj

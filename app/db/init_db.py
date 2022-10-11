@@ -16,6 +16,7 @@ async def create_first_admin(session: AsyncSession) -> None:
         name="admin",
         surname="admin",
         password=settings.FIRST_ADMIN_PASSWORD,
+        email="admin@admin.com",  # type: ignore
         role_name=RoleEnum.ADMIN,
     )
     await crud.user.create(session=session, obj_in=user_in)
@@ -25,6 +26,10 @@ async def init_db(session: AsyncSession) -> None:
     user = await crud.user.get_by_username(
         session=session, username=settings.FIRST_ADMIN_USERNAME
     )
-    if not user:
-        await create_admin_role(session=session)
+    if user is None:
+        admin_role = await crud.role.get_by_name(session=session, role_name="ADMIN")
+
+        if admin_role is None:
+            await create_admin_role(session=session)
+
         await create_first_admin(session=session)

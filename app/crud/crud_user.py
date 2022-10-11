@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import role
 from app.crud.base import CRUDBase
+from app.crud.exceptions import RoleNotFound
 from app.models import User
 from app.schemas import UserCreate, UserUpdate
 from app.utils import get_password_hash
@@ -19,6 +20,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         role_obj = await role.get_by_name(
             session=session, role_name=obj_in_data.pop("role_name")
         )
+        if role_obj is None:
+            raise RoleNotFound
+
         obj_in_data["hashed_password"] = await get_password_hash(
             obj_in_data.pop("password")
         )
@@ -56,6 +60,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     ) -> User | None:
         user = await session.execute(
             select(self.model).where(self.model.username == username)
+        )
+        return user.scalars().first()
+
+    async def get_by_email(self, session: AsyncSession, email: str) -> User | None:
+        user = await session.execute(
+            select(self.model).where(self.model.email == email)
         )
         return user.scalars().first()
 
