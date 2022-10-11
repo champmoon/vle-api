@@ -8,5 +8,8 @@ async_engine = create_async_engine(
 )
 
 async_session = sessionmaker(
-    autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession
+    autocommit=False,
+    autoflush=False,
+    bind=async_engine,
+    class_=AsyncSession,  # type: ignore
 )

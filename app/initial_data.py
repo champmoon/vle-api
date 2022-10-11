@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def init() -> None:
-    async with async_session() as db:  # type: ignore
+    async with async_session() as db:
         await init_db(db)
 
 
