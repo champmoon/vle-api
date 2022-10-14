@@ -3,8 +3,9 @@ from uuid import UUID
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import relationship, selectinload
 
 from app.db.base_class import Base
 
@@ -37,6 +38,10 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
         await session.refresh(db_obj)
         return db_obj
 
+    async def insert_flush(self, session: AsyncSession, insert_statement: dict) -> None:
+        await session.execute(insert(self.model).values(**insert_statement))
+        await session.flush()
+
     async def update(
         self,
         session: AsyncSession,
@@ -64,3 +69,44 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
         await session.delete(one_obj)
         await session.commit()
         return one_obj
+
+
+ManyToManyModelType = TypeVar("ManyToManyModelType", bound=Base)
+
+
+class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
+    def __init__(
+        self,
+        model: Type[ModelType],
+        many_to_many_model: Type[ManyToManyModelType],
+        relationship_attr: relationship,
+    ) -> None:
+        self.model = model
+        self.relationship_attr = relationship_attr
+        self.many_to_many_model = many_to_many_model
+
+    async def get(self, session: AsyncSession, id: UUID) -> ModelType | None:
+        obj = await session.execute(
+            select(self.model)
+            .where(self.model.id == id)
+            .options(selectinload(self.relationship_attr))
+        )
+        return obj.scalars().first()
+
+    async def get_multi(
+        self, session: AsyncSession, skip: int = 0, limit: int = 100
+    ) -> list[ModelType] | None:
+        objs = await session.execute(
+            select(self.model)
+            .offset(skip)
+            .limit(limit)
+            .options(selectinload(self.relationship_attr))
+        )
+        return objs.scalars().all()
+
+    async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
+        await session.execute(
+            insert(self.many_to_many_model).values(**insert_statement)
+        )
+
+        await session.flush()
