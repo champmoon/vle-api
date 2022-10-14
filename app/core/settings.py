@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     FIRST_ADMIN_USERNAME: str
     FIRST_ADMIN_PASSWORD: str
 
+    STATIC_FILES_DIR: str
+
     @classmethod
     def from_env(cls) -> Settings:
         return cls.parse_obj({})
