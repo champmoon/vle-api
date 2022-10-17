@@ -6,4 +6,6 @@ from .file import File
 from .role import Role
 from .specialty import Specialty
 from .specialty_file import SpecialtyFile
+from .theme import Theme
+from .theme_complex import ThemeComplex
 from .user import User

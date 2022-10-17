@@ -8,4 +8,6 @@ from app.models.file import File  # noqa
 from app.models.role import Role  # noqa
 from app.models.specialty import Specialty  # noqa
 from app.models.specialty_file import SpecialtyFile  # noqa
+from app.models.theme import Theme  # noqa
+from app.models.theme_complex import ThemeComplex  # noqa
 from app.models.user import User  # noqa
