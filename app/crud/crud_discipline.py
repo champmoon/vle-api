@@ -4,9 +4,9 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.base import CRUDBase
+from app.crud.base import CRUDBase, RelationshipBase
 from app.crud.crud_specialty import specialty_with_disciplines
-from app.models import Discipline
+from app.models import ComplexDiscipline, Discipline
 from app.models.discipline_specialty import DisciplineSpecialty
 from app.schemas import DisciplineCreate, DisciplineUpdate
 
@@ -42,4 +42,14 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
         await session.commit()
 
 
+class RelationshipComplex(RelationshipBase[Discipline, ComplexDiscipline]):
+    ...
+
+
 discipline = CRUDDiscipline(model=Discipline)
+
+discipline_with_complexes = RelationshipComplex(
+    model=Discipline,
+    relationship_attr=Discipline.complexes,
+    many_to_many_model=ComplexDiscipline,
+)
