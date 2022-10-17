@@ -1,4 +1,4 @@
-from .complex import Complex, ComplexCreate, ComplexUpdate
+from .complex import Complex, ComplexCreate, ComplexUpdate, ComplexWithThemes
 from .discipline import (
     Discipline,
     DisciplineCreate,
@@ -14,4 +14,5 @@ from .specialty import (
     SpecialtyWithDisciplines,
     SpecialtyWithFiles,
 )
+from .theme import Theme, ThemeCreate, ThemeUpdate
 from .user import User, UserCreate, UserUpdate

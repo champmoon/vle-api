@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.schemas.theme import Theme
+
 
 class ComplexBase(BaseModel):
     name: str
@@ -24,3 +26,7 @@ class ComplexInDBBase(ComplexBase):
 
 class Complex(ComplexInDBBase):
     ...
+
+
+class ComplexWithThemes(ComplexInDBBase):
+    themes: list[Theme]
