@@ -1,4 +1,10 @@
-from .discipline import Discipline, DisciplineCreate, DisciplineUpdate
+from .complex import Complex, ComplexCreate, ComplexUpdate
+from .discipline import (
+    Discipline,
+    DisciplineCreate,
+    DisciplineUpdate,
+    DisciplineWithComplexes,
+)
 from .file import File, FileCreate, FileUpdate
 from .role import Role, RoleCreate, RoleEnum, RoleUpdate
 from .specialty import (

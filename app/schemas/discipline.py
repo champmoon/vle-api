@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.schemas.complex import Complex
+
 
 class DisciplineBase(BaseModel):
     name: str
@@ -24,3 +26,7 @@ class DisciplineInDBBase(DisciplineBase):
 
 class Discipline(DisciplineInDBBase):
     ...
+
+
+class DisciplineWithComplexes(DisciplineInDBBase):
+    complexes: list[Complex]
