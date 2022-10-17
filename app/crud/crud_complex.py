@@ -4,9 +4,9 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.base import CRUDBase
+from app.crud.base import CRUDBase, RelationshipBase
 from app.crud.crud_discipline import discipline_with_complexes
-from app.models import Complex, ComplexDiscipline
+from app.models import Complex, ComplexDiscipline, ThemeComplex
 from app.schemas import ComplexCreate, ComplexUpdate
 
 
@@ -41,4 +41,12 @@ class CRUDComplex(CRUDBase[Complex, ComplexCreate, ComplexUpdate]):
         await session.commit()
 
 
+class RelationshipTheme(RelationshipBase[Complex, ThemeComplex]):
+    ...
+
+
 complex = CRUDComplex(model=Complex)
+
+complex_with_themes = RelationshipTheme(
+    model=Complex, relationship_attr=Complex.themes, many_to_many_model=ThemeComplex
+)
