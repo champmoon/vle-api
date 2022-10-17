@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
 from app.db.base_class import Base
+from app.models.discipline_specialty import DisciplineSpecialty
 from app.models.specialty_file import SpecialtyFile
 
 
@@ -17,4 +18,7 @@ class Specialty(Base):
 
     files: relationship = relationship(
         "File", secondary=SpecialtyFile.__tablename__, lazy="select"
+    )
+    disciplines: relationship = relationship(
+        "Discipline", secondary=DisciplineSpecialty.__tablename__, lazy="select"
     )
