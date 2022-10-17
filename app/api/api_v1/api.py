@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import discipline, file, role, specialty, user
+from app.api.api_v1.endpoints import complex, discipline, file, role, specialty, user
 
 api_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_router.include_router(file.router, prefix="/files", tags=["files"])
 api_router.include_router(
     discipline.router, prefix="/disciplines", tags=["disciplines"]
 )
+api_router.include_router(complex.router, prefix="/complexes", tags=["complexes"])

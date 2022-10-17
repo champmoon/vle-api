@@ -22,9 +22,28 @@ async def read_discipline(
     )
 
 
+@router.get("/complexes/{id}", response_model=schemas.DisciplineWithComplexes)
+async def read_discipline_with_complexes(
+    id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    discipline = await crud.discipline_with_complexes.get(session=session, id=id)
+    if discipline:
+        return discipline
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No discipline with this id"
+    )
+
+
 @router.get("/", response_model=list[schemas.Discipline])
 async def read_disciplines(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.discipline.get_multi(session=session)
+
+
+@router.get("/complexes/", response_model=list[schemas.DisciplineWithComplexes])
+async def read_disciplines_with_complexes(
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    return await crud.discipline_with_complexes.get_multi(session=session)
 
 
 @router.get("/specialies/{specialy_id}", response_model=list[schemas.Discipline])
