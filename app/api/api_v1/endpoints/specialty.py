@@ -34,6 +34,18 @@ async def read_specialty_with_files(
     )
 
 
+@router.get("/disciplines/{id}", response_model=schemas.SpecialtyWithDisciplines)
+async def read_specialty_with_disciplines(
+    id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    specialty_out = await crud.specialty_with_disciplines.get(session=session, id=id)
+    if specialty_out:
+        return specialty_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
+    )
+
+
 @router.get("/", response_model=list[schemas.Specialty])
 async def read_specialties(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.specialty.get_multi(session=session)
@@ -44,6 +56,13 @@ async def read_specialties_with_files(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.specialty_with_files.get_multi(session=session)
+
+
+@router.get("/disciplines/", response_model=list[schemas.SpecialtyWithDisciplines])
+async def read_specialties_with_disciplines(
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    return await crud.specialty_with_disciplines.get_multi(session=session)
 
 
 @router.post("/", response_model=schemas.Specialty)
