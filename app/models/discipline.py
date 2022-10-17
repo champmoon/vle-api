@@ -10,4 +10,3 @@ class Discipline(Base):
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
     name = Column(String, nullable=False)
-    param = Column(String, nullable=False)

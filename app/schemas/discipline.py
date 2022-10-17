@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 class DisciplineBase(BaseModel):
     name: str
-    param: str
 
 
 class DisciplineCreate(DisciplineBase):
