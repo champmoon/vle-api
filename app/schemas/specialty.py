@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.schemas.discipline import Discipline
 from app.schemas.file import File
 
 
@@ -32,3 +33,7 @@ class Specialty(SpecialtyInDBBase):
 
 class SpecialtyWithFiles(SpecialtyInDBBase):
     files: list[File]
+
+
+class SpecialtyWithDisciplines(SpecialtyInDBBase):
+    disciplines: list[Discipline]
