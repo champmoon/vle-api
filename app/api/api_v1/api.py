@@ -1,6 +1,14 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import complex, discipline, file, role, specialty, user
+from app.api.api_v1.endpoints import (
+    complex,
+    discipline,
+    file,
+    role,
+    specialty,
+    theme,
+    user,
+)
 
 api_router = APIRouter()
 
@@ -12,3 +20,4 @@ api_router.include_router(
     discipline.router, prefix="/disciplines", tags=["disciplines"]
 )
 api_router.include_router(complex.router, prefix="/complexes", tags=["complexes"])
+api_router.include_router(theme.router, prefix="/themes", tags=["themes"])

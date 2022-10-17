@@ -22,9 +22,28 @@ async def read_complex(
     )
 
 
+@router.get("/themes/{id}", response_model=schemas.ComplexWithThemes)
+async def read_complex_with_themes(
+    id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    complex_out = await crud.complex_with_themes.get(session=session, id=id)
+    if complex_out:
+        return complex_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
 @router.get("/", response_model=list[schemas.Complex])
 async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.complex.get_multi(session=session)
+
+
+@router.get("/themes/", response_model=list[schemas.ComplexWithThemes])
+async def read_complexes_with_themes(
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    return await crud.complex_with_themes.get_multi(session=session)
 
 
 @router.get("/disciplines/{discipline_id}", response_model=list[schemas.Complex])
