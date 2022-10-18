@@ -17,6 +17,4 @@ class Discipline(Base):
     complexes: relationship = relationship(
         "Complex", secondary=ComplexDiscipline.__tablename__, lazy="select"
     )
-    plan_file: relationship = relationship(
-        "File", foreign_keys=[plan]
-    )
+    plan_file: relationship = relationship("File", foreign_keys=[plan])

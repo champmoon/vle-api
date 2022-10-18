@@ -5,7 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
 from app.crud.base import CRUDBase, RelationshipBase
@@ -51,7 +50,9 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
     ) -> None:
         save_path = f"{settings.STATIC_FILES_DIR}/plans/{id}/"
 
-        await file.save_file_in_system(save_path=save_path, file_name=plan.filename, file=plan)
+        await file.save_file_in_system(
+            save_path=save_path, file_name=plan.filename, file=plan
+        )
 
         full_save_path = save_path + plan.filename
         file_id = uuid4()
@@ -65,15 +66,12 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
             await session.rollback()
 
             file_obj = await session.execute(
-                select(File)
-                .where(File.url == full_save_path)
+                select(File).where(File.url == full_save_path)
             )
             file_id = file_obj.scalar_one().id
 
         await session.execute(
-            update(self.model)
-            .where(self.model.id == id)
-            .values(plan=file_id)
+            update(self.model).where(self.model.id == id).values(plan=file_id)
         )
         await session.commit()
 
@@ -95,7 +93,5 @@ discipline_with_complexes = RelationshipComplex(
 )
 
 discipline_with_plan = RelationshipPlan(
-    model=Discipline,
-    relationship_attr=Discipline.plan_file,
-    many_to_many_model=None
+    model=Discipline, relationship_attr=Discipline.plan_file, many_to_many_model=None
 )
