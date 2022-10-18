@@ -22,7 +22,7 @@ async def read_discipline(
     )
 
 
-@router.get("/complexes/{id}", response_model=schemas.DisciplineWithComplexes)
+@router.get("{id}/complexes/", response_model=schemas.DisciplineWithComplexes)
 async def read_discipline_with_complexes(
     id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

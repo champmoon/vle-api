@@ -22,7 +22,7 @@ async def read_complex(
     )
 
 
-@router.get("/themes/{id}", response_model=schemas.ComplexWithThemes)
+@router.get("{id}/themes/", response_model=schemas.ComplexWithThemes)
 async def read_complex_with_themes(
     id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

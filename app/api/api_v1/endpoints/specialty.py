@@ -22,7 +22,7 @@ async def read_specialty(
     )
 
 
-@router.get("/files/{id}", response_model=schemas.SpecialtyWithFiles)
+@router.get("{id}/files/", response_model=schemas.SpecialtyWithFiles)
 async def read_specialty_with_files(
     id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
