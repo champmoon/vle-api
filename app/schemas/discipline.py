@@ -3,6 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from app.schemas.complex import Complex
+from app.schemas.file import File
 
 
 class DisciplineBase(BaseModel):
@@ -25,7 +26,7 @@ class DisciplineInDBBase(DisciplineBase):
 
 
 class Discipline(DisciplineInDBBase):
-    ...
+    plan_file: File | None
 
 
 class DisciplineWithComplexes(DisciplineInDBBase):

@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
@@ -14,7 +14,7 @@ router = APIRouter()
 async def read_discipline(
     id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    discipline = await crud.discipline.get(session=session, id=id)
+    discipline = await crud.discipline_with_plan.get(session=session, id=id)
     if discipline:
         return discipline
     raise HTTPException(
@@ -36,7 +36,7 @@ async def read_discipline_with_complexes(
 
 @router.get("/", response_model=list[schemas.Discipline])
 async def read_disciplines(session: AsyncSession = Depends(deps.get_session)) -> Any:
-    return await crud.discipline.get_multi(session=session)
+    return await crud.discipline_with_plan.get_multi(session=session)
 
 
 @router.get("/complexes/", response_model=list[schemas.DisciplineWithComplexes])
@@ -78,6 +78,21 @@ async def create_discipline(
         )
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
+    )
+
+
+@router.post("/plan/{id}", response_model=schemas.Discipline)
+async def attach_plan(
+    id: UUID,
+    plan: UploadFile,
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    discipline_out = await crud.discipline.get(session=session, id=id)
+    if discipline_out:
+        await crud.discipline.attach_plan(session=session, id=id, plan=plan)
+        return await crud.discipline_with_plan.get(session=session, id=id)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No discipline with this id"
     )
 
 

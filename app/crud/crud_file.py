@@ -13,7 +13,7 @@ from app.schemas import FileCreate, FileUpdate
 
 
 class CRUDFile(CRUDBase[File, FileCreate, FileUpdate]):
-    async def _save_file_in_system(
+    async def save_file_in_system(
         self, save_path: str, file_name: str, file: UploadFile
     ) -> None:
         if not os.path.isdir(save_path):
@@ -29,7 +29,7 @@ class CRUDFile(CRUDBase[File, FileCreate, FileUpdate]):
         save_path = f"{settings.STATIC_FILES_DIR}/{type_spec}/"
 
         for file in files:
-            await self._save_file_in_system(
+            await self.save_file_in_system(
                 save_path=save_path, file_name=file.filename, file=file
             )
             full_save_path = save_path + file.filename

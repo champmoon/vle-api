@@ -78,7 +78,7 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
     def __init__(
         self,
         model: Type[ModelType],
-        many_to_many_model: Type[ManyToManyModelType],
+        many_to_many_model: Type[ManyToManyModelType] | None,
         relationship_attr: relationship,
     ) -> None:
         self.model = model
