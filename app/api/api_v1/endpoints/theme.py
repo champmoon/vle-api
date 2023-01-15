@@ -27,6 +27,13 @@ async def read_themes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.theme.get_multi(session=session)
 
 
+@router.get("/files/", response_model=list[schemas.ThemeWithFiles])
+async def read_themes_with_files(
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    return await crud.theme_with_files.get_multi(session=session)
+
+
 @router.get("/complexes/{complex_id}", response_model=list[schemas.Theme])
 async def read_themes_for_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
@@ -38,6 +45,18 @@ async def read_themes_for_complex(
         )
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
+@router.get("/{id}/files/", response_model=schemas.ThemeWithFiles)
+async def read_theme_with_files(
+    id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    theme_out = await crud.theme_with_files.get(session=session, id=id)
+    if theme_out:
+        return theme_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No theme with this id"
     )
 
 
