@@ -52,7 +52,7 @@ async def read_disciplines_for_specialty(
 ) -> Any:
     specialty = await crud.specialty.get(session=session, id=specialy_id)
     if specialty:
-        return await crud.discipline.get_disciplines_for_specialty(
+        return await crud.discipline_for_specialty.get_for_specialty(
             session=session, specialty_id=specialy_id
         )
     raise HTTPException(
