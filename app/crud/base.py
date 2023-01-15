@@ -78,12 +78,12 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]
     def __init__(
         self,
         model: Type[ModelType],
-        many_to_many_model: Type[ManyToManyModelType] | None,
+        m2m_model: Type[ManyToManyModelType] | None,
         relationship_attr: relationship,
     ) -> None:
         self.model = model
         self.relationship_attr = relationship_attr
-        self.many_to_many_model = many_to_many_model
+        self.m2m_model = m2m_model
 
     async def get(self, session: AsyncSession, id: UUID) -> ModelType | None:
         obj = await session.execute(
@@ -103,6 +103,19 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]
             .options(selectinload(self.relationship_attr))
         )
         return objs.scalars().all()
+
+    async def get_for(
+        self,
+        session: AsyncSession,
+        m2m_parent_field: Any,
+        parent_uuid: UUID,
+    ) -> list[ModelType] | None:
+        childs = await session.execute(
+            select(self.model)
+            .join(self.m2m_model)
+            .where(m2m_parent_field == parent_uuid)
+        )
+        return childs.scalars().all()
 
     async def create_with_relation(
         self,
@@ -126,7 +139,5 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]
         await session.commit()
 
     async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
-        await session.execute(
-            insert(self.many_to_many_model).values(**insert_statement)
-        )
+        await session.execute(insert(self.m2m_model).values(**insert_statement))
         await session.flush()

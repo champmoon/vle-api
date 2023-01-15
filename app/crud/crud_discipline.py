@@ -14,16 +14,6 @@ from app.schemas import DisciplineCreate, DisciplineUpdate
 
 
 class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
-    async def get_disciplines_for_specialty(
-        self, session: AsyncSession, specialty_id: UUID
-    ) -> list[Discipline] | None:
-        disciplines = await session.execute(
-            select(self.model)
-            .join(DisciplineSpecialty)
-            .where(DisciplineSpecialty.specialty_id == specialty_id)
-        )
-        return disciplines.scalars().all()
-
     async def attach_plan(
         self, session: AsyncSession, id: UUID, plan: UploadFile
     ) -> None:
@@ -58,6 +48,15 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
 class RelationshipForSpecialty(
     RelationshipBase[Discipline, DisciplineSpecialty, DisciplineCreate]
 ):
+    async def get_for_specialty(
+        self, session: AsyncSession, specialty_id: UUID
+    ) -> list[Discipline] | None:
+        return await self.get_for(
+            session=session,
+            m2m_parent_field=DisciplineSpecialty.specialty_id,
+            parent_uuid=specialty_id,
+        )
+
     async def create(
         self, session: AsyncSession, discipline_in: DisciplineCreate, specialty_id: UUID
     ) -> None:
@@ -84,15 +83,15 @@ discipline = CRUDDiscipline(model=Discipline)
 discipline_with_complexes = RelationshipComplex(
     model=Discipline,
     relationship_attr=Discipline.complexes,
-    many_to_many_model=ComplexDiscipline,
+    m2m_model=ComplexDiscipline,
 )
 
 discipline_with_plan = RelationshipPlan(
-    model=Discipline, relationship_attr=Discipline.plan_file, many_to_many_model=None
+    model=Discipline, relationship_attr=Discipline.plan_file, m2m_model=None
 )
 
 discipline_for_specialty = RelationshipForSpecialty(
     model=Discipline,
     relationship_attr=Specialty.disciplines,
-    many_to_many_model=DisciplineSpecialty,
+    m2m_model=DisciplineSpecialty,
 )
