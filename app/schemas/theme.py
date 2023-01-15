@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.schemas.file import File
+
 
 class ThemeBase(BaseModel):
     name: str
@@ -24,3 +26,7 @@ class ThemeInDBBase(ThemeBase):
 
 class Theme(ThemeInDBBase):
     ...
+
+
+class ThemeWithFiles(ThemeInDBBase):
+    files: list[File]
