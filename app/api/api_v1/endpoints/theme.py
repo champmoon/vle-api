@@ -49,7 +49,7 @@ async def create_theme(
 ) -> Any:
     complex_out = await crud.complex.get(session=session, id=complex_id)
     if complex_out:
-        await crud.theme.create_with_relation(
+        await crud.theme_for_complex.create(
             session=session, theme_in=theme_in, complex_id=complex_id
         )
         return await crud.complex_with_themes.get(session=session, id=complex_id)

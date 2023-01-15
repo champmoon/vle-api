@@ -70,7 +70,7 @@ async def create_discipline(
 ) -> Any:
     specialty = await crud.specialty.get(session=session, id=specialy_id)
     if specialty:
-        await crud.discipline.create_with_relation(
+        await crud.discipline_for_specialty.create(
             session=session, discipline_in=discipline_in, specialty_id=specialy_id
         )
         return await crud.specialty_with_disciplines.get(
