@@ -7,11 +7,13 @@ class CRUDSpecialty(CRUDBase[Specialty, SpecialtyCreate, SpecialtyUpdate]):
     ...
 
 
-class RelationshipFiles(RelationshipBase[Specialty, SpecialtyFile]):
+class RelationshipFiles(RelationshipBase[Specialty, SpecialtyFile, SpecialtyCreate]):
     ...
 
 
-class RelationshipDiscipline(RelationshipBase[Specialty, DisciplineSpecialty]):
+class RelationshipDiscipline(
+    RelationshipBase[Specialty, DisciplineSpecialty, SpecialtyCreate]
+):
     ...
 
 

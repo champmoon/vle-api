@@ -70,7 +70,7 @@ async def create_complex(
 ) -> Any:
     discipline_out = await crud.discipline.get(session=session, id=discipline_id)
     if discipline_out:
-        await crud.complex.create_with_relation(
+        await crud.complex_for_discipline.create(
             session=session, complex_in=complex_in, discipline_id=discipline_id
         )
         return await crud.discipline_with_complexes.get(

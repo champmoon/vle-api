@@ -1,5 +1,5 @@
 from typing import Any, Generic, Type, TypeVar
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -74,7 +74,7 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
 ManyToManyModelType = TypeVar("ManyToManyModelType", bound=Base)
 
 
-class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
+class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]):
     def __init__(
         self,
         model: Type[ModelType],
@@ -104,9 +104,29 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
         )
         return objs.scalars().all()
 
+    async def create_with_relation(
+        self,
+        session: AsyncSession,
+        obj_in: CreateSchemeType,
+        other_model_uuid: dict[str, UUID],
+        model_uuid_name: str,
+    ) -> None:
+        obj_uuid = uuid4()
+        obj_in_data = jsonable_encoder(obj_in)
+
+        crud_obj: CRUDBase = CRUDBase(model=self.model)
+
+        await crud_obj.insert_flush(
+            session=session, insert_statement={"id": obj_uuid, **obj_in_data}
+        )
+        await self.relate_flush(
+            session=session,
+            insert_statement=other_model_uuid | {model_uuid_name: obj_uuid},
+        )
+        await session.commit()
+
     async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
         await session.execute(
             insert(self.many_to_many_model).values(**insert_statement)
         )
-
         await session.flush()
