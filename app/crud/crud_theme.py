@@ -4,9 +4,9 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.base import CRUDBase
+from app.crud.base import CRUDBase, RelationshipBase
 from app.crud.crud_complex import complex_with_themes
-from app.models import Theme, ThemeComplex
+from app.models import FileTheme, Theme, ThemeComplex
 from app.schemas import ThemeCreate, ThemeUpdate
 
 
@@ -41,4 +41,14 @@ class CRUDTheme(CRUDBase[Theme, ThemeCreate, ThemeUpdate]):
         await session.commit()
 
 
+class RelationshipFiles(RelationshipBase[Theme, FileTheme]):
+    ...
+
+
 theme = CRUDTheme(model=Theme)
+
+theme_with_files = RelationshipFiles(
+    model=Theme,
+    relationship_attr=Theme.files,
+    many_to_many_model=FileTheme,
+)
