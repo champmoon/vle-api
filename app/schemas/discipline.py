@@ -1,12 +1,11 @@
 from uuid import UUID
 
-from pydantic import BaseModel
-
+from app.schemas.base import BaseSchema
 from app.schemas.complex import Complex
 from app.schemas.file import File
 
 
-class DisciplineBase(BaseModel):
+class DisciplineBase(BaseSchema):
     name: str
 
 
