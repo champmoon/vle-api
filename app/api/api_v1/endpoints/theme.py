@@ -33,9 +33,6 @@ async def read_themes_for_complex(
 ) -> Any:
     complex_out = await crud.complex.get(session=session, id=complex_id)
     if complex_out:
-        # return await crud.theme.get_themes_for_complex(
-        #     session=session, complex_id=complex_id
-        # )
         return await crud.theme_for_complex.get_for_complex(
             session=session, complex_id=complex_id
         )
