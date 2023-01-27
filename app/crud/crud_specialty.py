@@ -20,11 +20,11 @@ class RelationshipDiscipline(
 specialty = CRUDSpecialty(model=Specialty)
 
 specialty_with_files = RelationshipFiles(
-    model=Specialty, relationship_attr=Specialty.files, many_to_many_model=SpecialtyFile
+    model=Specialty, relationship_attr=Specialty.files, m2m_model=SpecialtyFile
 )
 
 specialty_with_disciplines = RelationshipDiscipline(
     model=Specialty,
     relationship_attr=Specialty.disciplines,
-    many_to_many_model=DisciplineSpecialty,
+    m2m_model=DisciplineSpecialty,
 )

@@ -52,7 +52,7 @@ async def read_complexes_for_discipline(
 ) -> Any:
     discipline_out = await crud.discipline.get(session=session, id=discipline_id)
     if discipline_out:
-        return await crud.complex.get_complexs_for_discipline(
+        return await crud.complex_for_discipline.get_for_discipline(
             session=session, discipline_id=discipline_id
         )
     raise HTTPException(

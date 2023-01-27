@@ -1,6 +1,5 @@
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase, RelationshipBase
@@ -9,18 +8,19 @@ from app.schemas import ThemeCreate, ThemeUpdate
 
 
 class CRUDTheme(CRUDBase[Theme, ThemeCreate, ThemeUpdate]):
-    async def get_themes_for_complex(
-        self, session: AsyncSession, complex_id: UUID
-    ) -> list[Theme] | None:
-        themes = await session.execute(
-            select(self.model)
-            .join(ThemeComplex)
-            .where(ThemeComplex.complex_id == complex_id)
-        )
-        return themes.scalars().all()
+    ...
 
 
 class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate]):
+    async def get_for_complex(
+        self, session: AsyncSession, complex_id: UUID
+    ) -> list[Theme] | None:
+        return await self.get_for(
+            session=session,
+            m2m_parent_field=ThemeComplex.complex_id,
+            parent_uuid=complex_id,
+        )
+
     async def create(
         self, session: AsyncSession, theme_in: ThemeCreate, complex_id: UUID
     ) -> None:
@@ -35,5 +35,5 @@ class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate])
 theme = CRUDTheme(model=Theme)
 
 theme_for_complex = RelationshipForComplex(
-    model=Theme, relationship_attr=Complex.themes, many_to_many_model=ThemeComplex
+    model=Theme, relationship_attr=Complex.themes, m2m_model=ThemeComplex
 )
