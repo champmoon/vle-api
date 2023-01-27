@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
@@ -10,11 +10,11 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/{id}", response_model=schemas.Specialty)
+@router.get("/{specialty_id}/", response_model=schemas.Specialty)
 async def read_specialty(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    specialty_out = await crud.specialty.get(session=session, id=id)
+    specialty_out = await crud.specialty.get(session=session, id=specialty_id)
     if specialty_out:
         return specialty_out
     raise HTTPException(
@@ -22,11 +22,13 @@ async def read_specialty(
     )
 
 
-@router.get("{id}/files/", response_model=schemas.SpecialtyWithFiles)
+@router.get("/{specialty_id}/files/", response_model=schemas.SpecialtyWithFiles)
 async def read_specialty_with_files(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    specialty_out = await crud.specialty_with_files.get(session=session, id=id)
+    specialty_out = await crud.specialty_with_files.get(
+        session=session, id=specialty_id
+    )
     if specialty_out:
         return specialty_out
     raise HTTPException(
@@ -34,11 +36,15 @@ async def read_specialty_with_files(
     )
 
 
-@router.get("/disciplines/{id}", response_model=schemas.SpecialtyWithDisciplines)
+@router.get(
+    "/{specialty_id}/disciplines/", response_model=schemas.SpecialtyWithDisciplines
+)
 async def read_specialty_with_disciplines(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    specialty_out = await crud.specialty_with_disciplines.get(session=session, id=id)
+    specialty_out = await crud.specialty_with_disciplines.get(
+        session=session, id=specialty_id
+    )
     if specialty_out:
         return specialty_out
     raise HTTPException(
@@ -73,13 +79,30 @@ async def create_specialty(
     return await crud.specialty.create(session=session, obj_in=specialty_in)
 
 
-@router.put("/{id}", response_model=schemas.Specialty)
+@router.post("/{specialty_id}/files/", response_model=schemas.SpecialtyWithFiles)
+async def upload_files_for_specialty(
+    specialty_id: UUID,
+    file: UploadFile,
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    specialty = await crud.specialty.get(session=session, id=specialty_id)
+    if specialty:
+        await crud.file_for_specialty.create(
+            session=session, file=file, specialty_id=specialty_id
+        )
+        return await crud.specialty_with_files.get(session=session, id=specialty_id)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
+    )
+
+
+@router.put("/{specialty_id}/", response_model=schemas.Specialty)
 async def update_specialty(
-    id: UUID,
+    specialty_id: UUID,
     specialty_in: schemas.SpecialtyUpdate,
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
-    specialty_obj = await crud.specialty.get(session=session, id=id)
+    specialty_obj = await crud.specialty.get(session=session, id=specialty_id)
     if specialty_obj:
         return await crud.specialty.update(
             session=session, db_obj=specialty_obj, obj_in=specialty_in
@@ -89,13 +112,13 @@ async def update_specialty(
     )
 
 
-@router.delete("/{id}", response_model=schemas.Specialty)
+@router.delete("/{specialty_id}/", response_model=schemas.Specialty)
 async def delete_specialty(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    specialty_out = await crud.specialty.get(session=session, id=id)
+    specialty_out = await crud.specialty.get(session=session, id=specialty_id)
     if specialty_out:
-        return await crud.specialty.remove(session=session, id=id)
+        return await crud.specialty.remove(session=session, id=specialty_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
     )

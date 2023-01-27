@@ -1,11 +1,12 @@
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
 
 from app.schemas import RoleEnum
+from app.schemas.base import BaseSchema
 
 
-class UserBase(BaseModel):
+class UserBase(BaseSchema):
     username: str
     name: str
     surname: str

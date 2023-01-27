@@ -8,5 +8,19 @@
 ## Docker
 
 ```sh
-$ docker-compose -f docker/docker-compose.yml up -d
+$ docker-compose up -d
+```
+
+## Poetry hash problem in docker
+If you ran the command:
+```sh
+$ docker-compose up -d
+```
+and you have problems with hash, do these commands:
+```sh
+$ docker-compose down
+$ poetry cache clear . --all
+$ rm poetry.lock
+$ poetry install --no-root
+$ docker-compose up -d
 ```

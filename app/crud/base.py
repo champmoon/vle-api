@@ -74,16 +74,16 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
 ManyToManyModelType = TypeVar("ManyToManyModelType", bound=Base)
 
 
-class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
+class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]):
     def __init__(
         self,
         model: Type[ModelType],
-        many_to_many_model: Type[ManyToManyModelType] | None,
+        m2m_model: Type[ManyToManyModelType] | None,
         relationship_attr: relationship,
     ) -> None:
         self.model = model
         self.relationship_attr = relationship_attr
-        self.many_to_many_model = many_to_many_model
+        self.m2m_model = m2m_model
 
     async def get(self, session: AsyncSession, id: UUID) -> ModelType | None:
         obj = await session.execute(
@@ -104,9 +104,41 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType]):
         )
         return objs.scalars().all()
 
-    async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
-        await session.execute(
-            insert(self.many_to_many_model).values(**insert_statement)
+    async def get_for(
+        self,
+        session: AsyncSession,
+        m2m_parent_field: Any,
+        parent_uuid: UUID,
+    ) -> list[ModelType] | None:
+        childs = await session.execute(
+            select(self.model)
+            .join(self.m2m_model)
+            .where(m2m_parent_field == parent_uuid)
         )
+        return childs.scalars().all()
 
+    async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
+        await session.execute(insert(self.m2m_model).values(**insert_statement))
         await session.flush()
+
+    async def create_with_relation(
+        self,
+        session: AsyncSession,
+        model_in: CreateSchemeType,
+        model_statement: dict[str, UUID],
+        related_model_statement: dict[str, UUID],
+    ) -> None:
+        obj_in_data = jsonable_encoder(model_in)
+
+        crud_obj: CRUDBase = CRUDBase(model=self.model)
+
+        ((_, model_uuid),) = model_statement.items()
+
+        await crud_obj.insert_flush(
+            session=session, insert_statement={"id": model_uuid, **obj_in_data}
+        )
+        await self.relate_flush(
+            session=session,
+            insert_statement=model_statement | related_model_statement,
+        )
+        await session.commit()

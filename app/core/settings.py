@@ -1,9 +1,25 @@
 from __future__ import annotations
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import BaseSettings, HttpUrl, PostgresDsn, validator
 
 
 class Settings(BaseSettings):
+    SERVER_HOST: str
+    SERVER_PORT: str
+    PROTOCOL: str = "http"
+
+    SERVER_HOSTNAME: str | None = None
+
+    @validator("SERVER_HOSTNAME", pre=True)
+    def assemble_server_(cls, v: str | None, values: dict[str, str]) -> str:
+        if isinstance(v, str):
+            return v
+        return HttpUrl.build(
+            scheme=values["PROTOCOL"],
+            host=values["SERVER_HOST"],
+            port=values["SERVER_PORT"],
+        )
+
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str

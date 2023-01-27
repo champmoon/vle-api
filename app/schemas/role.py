@@ -1,14 +1,14 @@
 from enum import Enum
 from uuid import UUID
 
-from pydantic import BaseModel
+from app.schemas.base import BaseSchema
 
 
 class RoleEnum(str, Enum):
     ADMIN = "ADMIN"
 
 
-class RoleBase(BaseModel):
+class RoleBase(BaseSchema):
     name: RoleEnum
 
 
