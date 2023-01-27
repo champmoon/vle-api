@@ -41,5 +41,5 @@ class RelationshipForSpecialty(RelationshipBase[File, SpecialtyFile, FileCreate]
 file = CRUDFile(model=File)
 
 file_for_specialty = RelationshipForSpecialty(
-    model=File, many_to_many_model=SpecialtyFile, relationship_attr=Specialty.files
+    model=File, m2m_model=SpecialtyFile, relationship_attr=Specialty.files
 )
