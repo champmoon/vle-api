@@ -1,12 +1,11 @@
 from uuid import UUID
 
-from pydantic import BaseModel
-
+from app.schemas.base import BaseSchema
 from app.schemas.discipline import Discipline
 from app.schemas.file import File
 
 
-class SpecialtyBase(BaseModel):
+class SpecialtyBase(BaseSchema):
     position: str
     type: str
     year: int

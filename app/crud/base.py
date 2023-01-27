@@ -1,5 +1,5 @@
 from typing import Any, Generic, Type, TypeVar
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -117,27 +117,28 @@ class RelationshipBase(Generic[ModelType, ManyToManyModelType, CreateSchemeType]
         )
         return childs.scalars().all()
 
-    async def create_with_relation(
-        self,
-        session: AsyncSession,
-        obj_in: CreateSchemeType,
-        other_model_uuid: dict[str, UUID],
-        model_uuid_name: str,
-    ) -> None:
-        obj_uuid = uuid4()
-        obj_in_data = jsonable_encoder(obj_in)
-
-        crud_obj: CRUDBase = CRUDBase(model=self.model)
-
-        await crud_obj.insert_flush(
-            session=session, insert_statement={"id": obj_uuid, **obj_in_data}
-        )
-        await self.relate_flush(
-            session=session,
-            insert_statement=other_model_uuid | {model_uuid_name: obj_uuid},
-        )
-        await session.commit()
-
     async def relate_flush(self, session: AsyncSession, insert_statement: dict) -> None:
         await session.execute(insert(self.m2m_model).values(**insert_statement))
         await session.flush()
+
+    async def create_with_relation(
+        self,
+        session: AsyncSession,
+        model_in: CreateSchemeType,
+        model_statement: dict[str, UUID],
+        related_model_statement: dict[str, UUID],
+    ) -> None:
+        obj_in_data = jsonable_encoder(model_in)
+
+        crud_obj: CRUDBase = CRUDBase(model=self.model)
+
+        ((_, model_uuid),) = model_statement.items()
+
+        await crud_obj.insert_flush(
+            session=session, insert_statement={"id": model_uuid, **obj_in_data}
+        )
+        await self.relate_flush(
+            session=session,
+            insert_statement=model_statement | related_model_statement,
+        )
+        await session.commit()

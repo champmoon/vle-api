@@ -1,11 +1,10 @@
 from uuid import UUID
 
-from pydantic import BaseModel
-
+from app.schemas.base import BaseSchema
 from app.schemas.theme import Theme
 
 
-class ComplexBase(BaseModel):
+class ComplexBase(BaseSchema):
     name: str
 
 

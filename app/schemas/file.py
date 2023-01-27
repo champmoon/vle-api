@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from app.schemas.base import BaseSchema
 
 
-class FileBase(BaseModel):
+class FileBase(BaseSchema):
     url: str
 
 

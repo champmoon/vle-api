@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from app.schemas.base import BaseSchema
 
 
-class ThemeBase(BaseModel):
+class ThemeBase(BaseSchema):
     name: str
 
 

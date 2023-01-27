@@ -12,14 +12,16 @@ router = APIRouter()
 
 @router.post("/specialies/{specialy_id}", response_model=schemas.SpecialtyWithFiles)
 async def upload_files(
-    specialy_id: UUID,
+    specialty_id: UUID,
     file: UploadFile,
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
-    specialty = await crud.specialty.get(session=session, id=specialy_id)
+    specialty = await crud.specialty.get(session=session, id=specialty_id)
     if specialty:
-        await crud.file.upload(session=session, spec_obj=specialty, file=file)
-        return await crud.specialty_with_files.get(session=session, id=specialy_id)
+        await crud.file_for_specialty.create(
+            session=session, file=file, specialty_id=specialty_id
+        )
+        return await crud.specialty_with_files.get(session=session, id=specialty_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
     )
