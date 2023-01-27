@@ -89,7 +89,7 @@ async def attach_plan(
 ) -> Any:
     discipline_out = await crud.discipline.get(session=session, id=id)
     if discipline_out:
-        await crud.discipline.attach_plan(session=session, id=id, plan=plan)
+        await crud.discipline_with_plan.attach(session=session, id=id, plan=plan)
         return await crud.discipline_with_plan.get(session=session, id=id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No discipline with this id"
