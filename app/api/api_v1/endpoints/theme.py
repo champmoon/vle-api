@@ -10,11 +10,11 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/{id}", response_model=schemas.Theme)
+@router.get("/{theme_id}/", response_model=schemas.Theme)
 async def read_theme(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    theme_out = await crud.theme.get(session=session, id=id)
+    theme_out = await crud.theme.get(session=session, id=theme_id)
     if theme_out:
         return theme_out
     raise HTTPException(
@@ -27,7 +27,7 @@ async def read_themes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.theme.get_multi(session=session)
 
 
-@router.get("/complexes/{complex_id}", response_model=list[schemas.Theme])
+@router.get("/complexes/{complex_id}/", response_model=list[schemas.Theme])
 async def read_themes_for_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -41,7 +41,7 @@ async def read_themes_for_complex(
     )
 
 
-@router.post("/complexes/{complex_id}", response_model=schemas.ComplexWithThemes)
+@router.post("/complexes/{complex_id}/", response_model=schemas.ComplexWithThemes)
 async def create_theme(
     complex_id: UUID,
     theme_in: schemas.ThemeCreate,
@@ -58,13 +58,13 @@ async def create_theme(
     )
 
 
-@router.put("/{id}", response_model=schemas.Theme)
+@router.put("/{theme_id}/", response_model=schemas.Theme)
 async def update_theme(
-    id: UUID,
+    theme_id: UUID,
     theme_in: schemas.ThemeUpdate,
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
-    theme_obj = await crud.theme.get(session=session, id=id)
+    theme_obj = await crud.theme.get(session=session, id=theme_id)
     if theme_obj:
         return await crud.theme.update(
             session=session, db_obj=theme_obj, obj_in=theme_in
@@ -74,13 +74,13 @@ async def update_theme(
     )
 
 
-@router.delete("/{id}", response_model=schemas.Theme)
+@router.delete("/{theme_id}/", response_model=schemas.Theme)
 async def delete_theme(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    theme_out = await crud.theme.get(session=session, id=id)
+    theme_out = await crud.theme.get(session=session, id=theme_id)
     if theme_out:
-        return await crud.theme.remove(session=session, id=id)
+        return await crud.theme.remove(session=session, id=theme_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No theme with this id"
     )

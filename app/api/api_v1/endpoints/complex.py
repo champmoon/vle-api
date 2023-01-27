@@ -10,11 +10,11 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/{id}", response_model=schemas.Complex)
+@router.get("/{complex_id}/", response_model=schemas.Complex)
 async def read_complex(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    complex_out = await crud.complex.get(session=session, id=id)
+    complex_out = await crud.complex.get(session=session, id=complex_id)
     if complex_out:
         return complex_out
     raise HTTPException(
@@ -22,11 +22,11 @@ async def read_complex(
     )
 
 
-@router.get("{id}/themes/", response_model=schemas.ComplexWithThemes)
+@router.get("{complex_id}/themes/", response_model=schemas.ComplexWithThemes)
 async def read_complex_with_themes(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    complex_out = await crud.complex_with_themes.get(session=session, id=id)
+    complex_out = await crud.complex_with_themes.get(session=session, id=complex_id)
     if complex_out:
         return complex_out
     raise HTTPException(
@@ -46,7 +46,7 @@ async def read_complexes_with_themes(
     return await crud.complex_with_themes.get_multi(session=session)
 
 
-@router.get("/disciplines/{discipline_id}", response_model=list[schemas.Complex])
+@router.get("/disciplines/{discipline_id}/", response_model=list[schemas.Complex])
 async def read_complexes_for_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -61,7 +61,7 @@ async def read_complexes_for_discipline(
 
 
 @router.post(
-    "/disciplines/{discipline_id}", response_model=schemas.DisciplineWithComplexes
+    "/disciplines/{discipline_id}/", response_model=schemas.DisciplineWithComplexes
 )
 async def create_complex(
     discipline_id: UUID,
@@ -81,13 +81,13 @@ async def create_complex(
     )
 
 
-@router.put("/{id}", response_model=schemas.Complex)
+@router.put("/{complex_id}/", response_model=schemas.Complex)
 async def update_complex(
-    id: UUID,
+    complex_id: UUID,
     complex_in: schemas.ComplexUpdate,
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
-    complex_obj = await crud.complex.get(session=session, id=id)
+    complex_obj = await crud.complex.get(session=session, id=complex_id)
     if complex_obj:
         return await crud.complex.update(
             session=session, db_obj=complex_obj, obj_in=complex_in
@@ -97,13 +97,13 @@ async def update_complex(
     )
 
 
-@router.delete("/{id}", response_model=schemas.Complex)
+@router.delete("/{complex_id}/", response_model=schemas.Complex)
 async def delete_complex(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    complex_out = await crud.complex.get(session=session, id=id)
+    complex_out = await crud.complex.get(session=session, id=complex_id)
     if complex_out:
-        return await crud.complex.remove(session=session, id=id)
+        return await crud.complex.remove(session=session, id=complex_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
     )
