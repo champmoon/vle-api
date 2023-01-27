@@ -12,9 +12,11 @@ from app.crud.exceptions import RoleNotFound
 router = APIRouter()
 
 
-@router.get("/{id}", response_model=schemas.User)
-async def read_user(id: UUID, session: AsyncSession = Depends(deps.get_session)) -> Any:
-    user_out = await crud.user.get(session=session, id=id)
+@router.get("/{user_id}/", response_model=schemas.User)
+async def read_user(
+    user_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    user_out = await crud.user.get(session=session, id=user_id)
     if user_out:
         return user_out
     raise HTTPException(
@@ -22,7 +24,7 @@ async def read_user(id: UUID, session: AsyncSession = Depends(deps.get_session))
     )
 
 
-@router.get("/{username}/username", response_model=schemas.User)
+@router.get("/{username}/username/", response_model=schemas.User)
 async def read_user_by_username(
     username: str, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -34,7 +36,7 @@ async def read_user_by_username(
     )
 
 
-@router.get("/{email}/email", response_model=schemas.User)
+@router.get("/{email}/email/", response_model=schemas.User)
 async def read_user_by_email(
     email: EmailStr, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -84,13 +86,13 @@ async def create_user(
         )
 
 
-@router.put("/{id}", response_model=schemas.User)
+@router.put("/{user_id}/", response_model=schemas.User)
 async def update_user(
-    id: UUID,
+    user_id: UUID,
     user_in: schemas.UserUpdate,
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
-    user_obj = await crud.user.get(session=session, id=id)
+    user_obj = await crud.user.get(session=session, id=user_id)
     if user_obj:
         return await crud.user.update(session=session, db_obj=user_obj, obj_in=user_in)
     raise HTTPException(
@@ -98,13 +100,13 @@ async def update_user(
     )
 
 
-@router.delete("/{id}", response_model=schemas.User)
+@router.delete("/{user_id}/", response_model=schemas.User)
 async def delete_user(
-    id: UUID, session: AsyncSession = Depends(deps.get_session)
+    user_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
-    user_out = await crud.user.get(session=session, id=id)
+    user_out = await crud.user.get(session=session, id=user_id)
     if user_out:
-        return await crud.user.remove(session=session, id=id)
+        return await crud.user.remove(session=session, id=user_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No user with this id"
     )
