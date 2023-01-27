@@ -1,16 +1,17 @@
 from uuid import UUID, uuid4
 
 from fastapi import UploadFile
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, update
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app.core.settings import settings
 from app.crud.base import CRUDBase, RelationshipBase
-from app.crud.crud_file import file
-from app.models import ComplexDiscipline, Discipline, File, Specialty
+from app.crud.crud_file import file as crud_file
+from app.lib.files import SystemFile
+from app.models import ComplexDiscipline, Discipline, Specialty
 from app.models.discipline_specialty import DisciplineSpecialty
-from app.schemas import DisciplineCreate, DisciplineUpdate
+from app.schemas import DisciplineCreate, DisciplineUpdate, FileCreate
 
 
 class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
@@ -21,38 +22,10 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
             select(self.model)
             .join(DisciplineSpecialty)
             .where(DisciplineSpecialty.specialty_id == specialty_id)
+            .options(selectinload(Discipline.plan_file))
         )
+
         return disciplines.scalars().all()
-
-    async def attach_plan(
-        self, session: AsyncSession, id: UUID, plan: UploadFile
-    ) -> None:
-        save_path = f"{settings.STATIC_FILES_DIR}/plans/{id}/"
-
-        await file.save_file_in_system(
-            save_path=save_path, file_name=plan.filename, file=plan
-        )
-
-        full_save_path = save_path + plan.filename
-        file_id = uuid4()
-
-        try:
-            await file.insert_flush(
-                session=session,
-                insert_statement={"id": file_id, "url": full_save_path},
-            )
-        except IntegrityError:
-            await session.rollback()
-
-            file_obj = await session.execute(
-                select(File).where(File.url == full_save_path)
-            )
-            file_id = file_obj.scalar_one().id
-
-        await session.execute(
-            update(self.model).where(self.model.id == id).values(plan=file_id)
-        )
-        await session.commit()
 
 
 class RelationshipForSpecialty(
@@ -63,9 +36,9 @@ class RelationshipForSpecialty(
     ) -> None:
         await self.create_with_relation(
             session=session,
-            obj_in=discipline_in,
-            other_model_uuid={"specialty_id": specialty_id},
-            model_uuid_name="discipline_id",
+            model_in=discipline_in,
+            model_statement={"discipline_id": uuid4()},
+            related_model_statement={"specialty_id": specialty_id},
         )
 
 
@@ -76,7 +49,23 @@ class RelationshipComplex(
 
 
 class RelationshipPlan(RelationshipBase):
-    ...
+    async def attach(self, session: AsyncSession, plan: UploadFile, id: UUID) -> None:
+        file_id = uuid4()
+
+        system_file = SystemFile(
+            bytes_buffer=plan.file, dir_path=str(file_id), filename=plan.filename
+        )
+
+        file_in = FileCreate(url=system_file.save())
+        file_in_data = jsonable_encoder(file_in)
+
+        await crud_file.insert_flush(
+            session=session, insert_statement={"id": file_id, **file_in_data}
+        )
+        await session.execute(
+            update(self.model).where(self.model.id == id).values(plan=file_id)
+        )
+        await session.commit()
 
 
 discipline = CRUDDiscipline(model=Discipline)
