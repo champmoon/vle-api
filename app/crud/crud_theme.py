@@ -1,4 +1,4 @@
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,9 +26,9 @@ class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate])
     ) -> None:
         await self.create_with_relation(
             session=session,
-            obj_in=theme_in,
-            other_model_uuid={"complex_id": complex_id},
-            model_uuid_name="theme_id",
+            model_in=theme_in,
+            model_statement={"theme_id": uuid4()},
+            related_model_statement={"complex_id": complex_id},
         )
 
 
