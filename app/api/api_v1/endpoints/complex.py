@@ -10,6 +10,18 @@ from app.api import deps
 router = APIRouter()
 
 
+@router.get("/", response_model=list[schemas.Complex])
+async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> Any:
+    return await crud.complex.get_multi(session=session)
+
+
+@router.get("/themes/", response_model=list[schemas.ComplexWithThemes])
+async def read_complexes_with_themes(
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    return await crud.complex_with_themes.get_multi(session=session)
+
+
 @router.get("/{complex_id}/", response_model=schemas.Complex)
 async def read_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
@@ -22,7 +34,35 @@ async def read_complex(
     )
 
 
-@router.get("{complex_id}/themes/", response_model=schemas.ComplexWithThemes)
+@router.put("/{complex_id}/", response_model=schemas.Complex)
+async def update_complex(
+    complex_id: UUID,
+    complex_in: schemas.ComplexUpdate,
+    session: AsyncSession = Depends(deps.get_session),
+) -> Any:
+    complex_obj = await crud.complex.get(session=session, id=complex_id)
+    if complex_obj:
+        return await crud.complex.update(
+            session=session, db_obj=complex_obj, obj_in=complex_in
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
+@router.delete("/{complex_id}/", response_model=schemas.Complex)
+async def delete_complex(
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    complex_out = await crud.complex.get(session=session, id=complex_id)
+    if complex_out:
+        return await crud.complex.remove(session=session, id=complex_id)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
+@router.get("/{complex_id}/themes/", response_model=schemas.ComplexWithThemes)
 async def read_complex_with_themes(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -32,18 +72,6 @@ async def read_complex_with_themes(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
     )
-
-
-@router.get("/", response_model=list[schemas.Complex])
-async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> Any:
-    return await crud.complex.get_multi(session=session)
-
-
-@router.get("/themes/", response_model=list[schemas.ComplexWithThemes])
-async def read_complexes_with_themes(
-    session: AsyncSession = Depends(deps.get_session),
-) -> Any:
-    return await crud.complex_with_themes.get_multi(session=session)
 
 
 @router.get("/disciplines/{discipline_id}/", response_model=list[schemas.Complex])
@@ -78,32 +106,4 @@ async def create_complex(
         )
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No discipline with this id"
-    )
-
-
-@router.put("/{complex_id}/", response_model=schemas.Complex)
-async def update_complex(
-    complex_id: UUID,
-    complex_in: schemas.ComplexUpdate,
-    session: AsyncSession = Depends(deps.get_session),
-) -> Any:
-    complex_obj = await crud.complex.get(session=session, id=complex_id)
-    if complex_obj:
-        return await crud.complex.update(
-            session=session, db_obj=complex_obj, obj_in=complex_in
-        )
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
-    )
-
-
-@router.delete("/{complex_id}/", response_model=schemas.Complex)
-async def delete_complex(
-    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
-) -> Any:
-    complex_out = await crud.complex.get(session=session, id=complex_id)
-    if complex_out:
-        return await crud.complex.remove(session=session, id=complex_id)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
     )
