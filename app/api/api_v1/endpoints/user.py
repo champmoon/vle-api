@@ -12,42 +12,6 @@ from app.crud.exceptions import RoleNotFound
 router = APIRouter()
 
 
-@router.get("/{user_id}/", response_model=schemas.User)
-async def read_user(
-    user_id: UUID, session: AsyncSession = Depends(deps.get_session)
-) -> Any:
-    user_out = await crud.user.get(session=session, id=user_id)
-    if user_out:
-        return user_out
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this id"
-    )
-
-
-@router.get("/{username}/username/", response_model=schemas.User)
-async def read_user_by_username(
-    username: str, session: AsyncSession = Depends(deps.get_session)
-) -> Any:
-    user_out = await crud.user.get_by_username(session=session, username=username)
-    if user_out:
-        return user_out
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this username"
-    )
-
-
-@router.get("/{email}/email/", response_model=schemas.User)
-async def read_user_by_email(
-    email: EmailStr, session: AsyncSession = Depends(deps.get_session)
-) -> Any:
-    user_out = await crud.user.get_by_email(session=session, email=email)
-    if user_out:
-        return user_out
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this email"
-    )
-
-
 @router.get("/", response_model=list[schemas.User])
 async def read_users(
     skip: int = 0, limit: int = 100, session: AsyncSession = Depends(deps.get_session)
@@ -109,4 +73,40 @@ async def delete_user(
         return await crud.user.remove(session=session, id=user_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No user with this id"
+    )
+
+
+@router.get("/{user_id}/", response_model=schemas.User)
+async def read_user(
+    user_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    user_out = await crud.user.get(session=session, id=user_id)
+    if user_out:
+        return user_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this id"
+    )
+
+
+@router.get("/{email}/email/", response_model=schemas.User)
+async def read_user_by_email(
+    email: EmailStr, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    user_out = await crud.user.get_by_email(session=session, email=email)
+    if user_out:
+        return user_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this email"
+    )
+
+
+@router.get("/{username}/username/", response_model=schemas.User)
+async def read_user_by_username(
+    username: str, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    user_out = await crud.user.get_by_username(session=session, username=username)
+    if user_out:
+        return user_out
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No user with this username"
     )

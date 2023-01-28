@@ -14,5 +14,5 @@ from .specialty import (
     SpecialtyWithDisciplines,
     SpecialtyWithFiles,
 )
-from .theme import Theme, ThemeCreate, ThemeUpdate
+from .theme import Theme, ThemeCreate, ThemeUpdate, ThemeWithFiles
 from .user import User, UserCreate, UserUpdate

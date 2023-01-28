@@ -24,7 +24,6 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
             .where(DisciplineSpecialty.specialty_id == specialty_id)
             .options(selectinload(Discipline.plan_file))
         )
-
         return disciplines.scalars().all()
 
 
@@ -65,7 +64,7 @@ class RelationshipPlan(RelationshipBase):
             bytes_buffer=plan.file, dir_path=str(file_id), filename=plan.filename
         )
 
-        file_in = FileCreate(url=system_file.save())
+        file_in = FileCreate(url=system_file.save(), name=plan.filename)
         file_in_data = jsonable_encoder(file_in)
 
         await crud_file.insert_flush(

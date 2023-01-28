@@ -3,11 +3,15 @@ from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase, RelationshipBase
-from app.models import Complex, Theme, ThemeComplex
+from app.models import Complex, FileTheme, Theme, ThemeComplex
 from app.schemas import ThemeCreate, ThemeUpdate
 
 
 class CRUDTheme(CRUDBase[Theme, ThemeCreate, ThemeUpdate]):
+    ...
+
+
+class RelationshipFiles(RelationshipBase[Theme, FileTheme, ThemeCreate]):
     ...
 
 
@@ -33,6 +37,10 @@ class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate])
 
 
 theme = CRUDTheme(model=Theme)
+
+theme_with_files = RelationshipFiles(
+    model=Theme, relationship_attr=Theme.files, m2m_model=FileTheme
+)
 
 theme_for_complex = RelationshipForComplex(
     model=Theme, relationship_attr=Complex.themes, m2m_model=ThemeComplex

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from app.schemas.base import BaseSchema
+from app.schemas.file import File
 
 
 class ThemeBase(BaseSchema):
@@ -24,3 +25,7 @@ class ThemeInDBBase(ThemeBase):
 
 class Theme(ThemeInDBBase):
     ...
+
+
+class ThemeWithFiles(ThemeInDBBase):
+    files: list[File]
