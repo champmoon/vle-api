@@ -70,6 +70,11 @@ class CRUDBase(Generic[ModelType, CreateSchemeType, UpdateSchemeType]):
         await session.commit()
         return one_obj
 
+    async def remove_flush(self, session: AsyncSession, id: UUID) -> None:
+        obj = await session.execute(select(self.model).where(self.model.id == id))
+        one_obj = obj.scalar_one()
+        await session.delete(one_obj)
+
 
 ManyToManyModelType = TypeVar("ManyToManyModelType", bound=Base)
 

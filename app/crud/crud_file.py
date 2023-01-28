@@ -17,8 +17,30 @@ class CRUDFile(CRUDBase[File, FileCreate, FileUpdate]):
 
         return file_obj
 
+    async def remove_multi(
+        self, session: AsyncSession, files: list[File] | None
+    ) -> None:
+        if files:
+            for file_out in files:
+                file_id = file_out.id
+
+                SystemFile(dir_path=str(file_id)).delete()
+
+                await super().remove_flush(session=session, id=file_id)  # type: ignore
+
+            await session.commit()
+
 
 class RelationshipForSpecialty(RelationshipBase[File, SpecialtyFile, FileCreate]):
+    async def get_for_specialty(
+        self, session: AsyncSession, specialty_id: UUID
+    ) -> list[File] | None:
+        return await self.get_for(
+            session=session,
+            m2m_parent_field=SpecialtyFile.specialty_id,
+            parent_uuid=specialty_id,
+        )
+
     async def create(
         self, session: AsyncSession, files: list[UploadFile], specialty_id: UUID
     ) -> None:
@@ -40,6 +62,15 @@ class RelationshipForSpecialty(RelationshipBase[File, SpecialtyFile, FileCreate]
 
 
 class RelationshipForThemes(RelationshipBase[File, FileTheme, FileCreate]):
+    async def get_for_theme(
+        self, session: AsyncSession, theme_id: UUID
+    ) -> list[File] | None:
+        return await self.get_for(
+            session=session,
+            m2m_parent_field=FileTheme.theme_id,
+            parent_uuid=theme_id,
+        )
+
     async def create(
         self, session: AsyncSession, files: list[UploadFile], theme_id: UUID
     ) -> None:
