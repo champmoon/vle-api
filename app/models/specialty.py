@@ -13,7 +13,7 @@ class Specialty(Base):
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
     position = Column(String, nullable=False)
-    type = Column(String, nullable=False)
+    number = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
 
     files: relationship = relationship(

@@ -7,7 +7,7 @@ from app.schemas.file import File
 
 class SpecialtyBase(BaseSchema):
     position: str
-    type: str
+    number: str
     year: int
 
 
