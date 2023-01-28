@@ -4,6 +4,7 @@ from app.schemas.base import BaseSchema
 
 
 class FileBase(BaseSchema):
+    name: str
     url: str
 
 

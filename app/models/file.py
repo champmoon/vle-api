@@ -9,4 +9,5 @@ class File(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
+    name = Column(String, nullable=False)
     url = Column(String, nullable=False, unique=True)
