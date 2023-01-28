@@ -50,5 +50,7 @@ class SystemFile:
         """
         delete file in a `static directory`
         """
-
-        shutil.rmtree(f"{self.static_dir}/{self.dir_path}")
+        try:
+            shutil.rmtree(f"{self.static_dir}/{self.dir_path}")
+        except Exception:
+            pass
