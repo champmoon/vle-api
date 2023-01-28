@@ -1,7 +1,6 @@
 from uuid import UUID
 
 from app.schemas.base import BaseSchema
-
 from app.schemas.file import File
 
 

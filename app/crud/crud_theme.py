@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase, RelationshipBase
-from app.models import Complex, Theme, ThemeComplex, FileTheme
+from app.models import Complex, FileTheme, Theme, ThemeComplex
 from app.schemas import ThemeCreate, ThemeUpdate
 
 

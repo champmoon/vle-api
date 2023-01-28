@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase, RelationshipBase
 from app.lib.files import SystemFile
-from app.models import File, Specialty, SpecialtyFile, FileTheme, Theme
+from app.models import File, FileTheme, Specialty, SpecialtyFile, Theme
 from app.schemas import FileCreate, FileUpdate
 
 
