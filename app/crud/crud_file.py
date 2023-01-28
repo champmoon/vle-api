@@ -17,6 +17,19 @@ class CRUDFile(CRUDBase[File, FileCreate, FileUpdate]):
 
         return file_obj
 
+    async def remove_multi(
+        self, session: AsyncSession, files: list[File] | None
+    ) -> None:
+        if files:
+            for file_out in files:
+                file_id = file_out.id
+
+                SystemFile(dir_path=str(file_id)).delete()
+
+                await super().remove_flush(session=session, id=file_id)  # type: ignore
+
+            await session.commit()
+
 
 class RelationshipForSpecialty(RelationshipBase[File, SpecialtyFile, FileCreate]):
     async def get_for_specialty(
