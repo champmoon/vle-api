@@ -37,3 +37,31 @@ async def read_file(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No file with this id"
     )
+
+
+@router.get("/themes/{theme_id}/", response_model=list[schemas.File])
+async def read_files_for_theme(
+    theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    theme = await crud.theme.get(session=session, id=theme_id)
+    if theme:
+        return await crud.file_for_themes.get_for_theme(
+            session=session, theme_id=theme_id
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No theme with this id"
+    )
+
+
+@router.get("/specialties/{specialty_id}/", response_model=list[schemas.File])
+async def read_files_for_specialty(
+    specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    specialty = await crud.specialty.get(session=session, id=specialty_id)
+    if specialty:
+        return await crud.file_for_specialty.get_for_specialty(
+            session=session, specialty_id=specialty_id
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"
+    )
