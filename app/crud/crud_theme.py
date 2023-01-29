@@ -1,6 +1,8 @@
 from uuid import UUID, uuid4
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase, RelationshipBase
 from app.models import Complex, FileTheme, Theme, ThemeComplex
@@ -24,6 +26,17 @@ class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate])
             m2m_parent_field=ThemeComplex.complex_id,
             parent_uuid=complex_id,
         )
+
+    async def get_for_complex_with_files(
+        self, session: AsyncSession, complex_id: UUID
+    ) -> list[Theme] | None:
+        complexes_with_files = await session.execute(
+            select(self.model)
+            .join(ThemeComplex)
+            .where(ThemeComplex.complex_id == complex_id)
+            .options(selectinload(Theme.files))
+        )
+        return complexes_with_files.scalars().all()
 
     async def create(
         self, session: AsyncSession, theme_in: ThemeCreate, complex_id: UUID

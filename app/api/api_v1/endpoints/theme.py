@@ -134,3 +134,21 @@ async def create_theme(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
     )
+
+
+@router.get(
+    "/complexes/{complex_id}/files/",
+    response_model=list[schemas.ThemeWithFiles],
+    tags=["themes with files"],
+)
+async def read_themes_for_complex_with_files(
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    complex_out = await crud.complex.get(session=session, id=complex_id)
+    if complex_out:
+        return await crud.theme_for_complex.get_for_complex_with_files(
+            session=session, complex_id=complex_id
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
