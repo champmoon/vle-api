@@ -10,12 +10,12 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.File])
+@router.get("/", response_model=list[schemas.File], tags=["files"])
 async def read_files(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.file.get_multi(session=session)
 
 
-@router.delete("/{file_id}/", response_model=schemas.File)
+@router.delete("/{file_id}/", response_model=schemas.File, tags=["files"])
 async def delete_file(
     file_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -27,7 +27,7 @@ async def delete_file(
     )
 
 
-@router.get("/{file_id}/", response_model=schemas.File)
+@router.get("/{file_id}/", response_model=schemas.File, tags=["files"])
 async def read_file(
     file_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -39,7 +39,7 @@ async def read_file(
     )
 
 
-@router.get("/themes/{theme_id}/", response_model=list[schemas.File])
+@router.get("/themes/{theme_id}/", response_model=list[schemas.File], tags=["files"])
 async def read_files_for_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -53,7 +53,9 @@ async def read_files_for_theme(
     )
 
 
-@router.get("/specialties/{specialty_id}/", response_model=list[schemas.File])
+@router.get(
+    "/specialties/{specialty_id}/", response_model=list[schemas.File], tags=["files"]
+)
 async def read_files_for_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
