@@ -96,7 +96,7 @@ async def upload_files_for_theme(
 ) -> Any:
     theme = await crud.theme.get(session=session, id=theme_id)
     if theme:
-        await crud.file_for_themes.create(
+        await crud.file_for_themes.create_multi(
             session=session, files=files, theme_id=theme_id
         )
         return await crud.theme_with_files.get(session=session, id=theme_id)

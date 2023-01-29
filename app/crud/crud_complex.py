@@ -25,13 +25,17 @@ class RelationshipForDiscipline(
 
     async def create(
         self, session: AsyncSession, complex_in: ComplexCreate, discipline_id: UUID
-    ) -> None:
+    ) -> UUID:
+        complex_id = uuid4()
+
         await self.create_with_relation(
             session=session,
             model_in=complex_in,
-            model_statement={"complex_id": uuid4()},
+            model_statement={"complex_id": complex_id},
             related_model_statement={"discipline_id": discipline_id},
         )
+
+        return complex_id
 
 
 class RelationshipTheme(RelationshipBase[Complex, ThemeComplex, ComplexCreate]):

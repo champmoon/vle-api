@@ -27,13 +27,17 @@ class RelationshipForComplex(RelationshipBase[Theme, ThemeComplex, ThemeCreate])
 
     async def create(
         self, session: AsyncSession, theme_in: ThemeCreate, complex_id: UUID
-    ) -> None:
+    ) -> UUID:
+        theme_id = uuid4()
+
         await self.create_with_relation(
             session=session,
             model_in=theme_in,
-            model_statement={"theme_id": uuid4()},
+            model_statement={"theme_id": theme_id},
             related_model_statement={"complex_id": complex_id},
         )
+
+        return theme_id
 
 
 theme = CRUDTheme(model=Theme)

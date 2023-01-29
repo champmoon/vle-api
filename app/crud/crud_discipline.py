@@ -41,13 +41,17 @@ class RelationshipForSpecialty(
 
     async def create(
         self, session: AsyncSession, discipline_in: DisciplineCreate, specialty_id: UUID
-    ) -> None:
+    ) -> UUID:
+        discipline_id = uuid4()
+
         await self.create_with_relation(
             session=session,
             model_in=discipline_in,
-            model_statement={"discipline_id": uuid4()},
+            model_statement={"discipline_id": discipline_id},
             related_model_statement={"specialty_id": specialty_id},
         )
+
+        return discipline_id
 
 
 class RelationshipComplex(
