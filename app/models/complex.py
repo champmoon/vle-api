@@ -14,5 +14,8 @@ class Complex(Base):
     name = Column(String, nullable=False)
 
     themes: relationship = relationship(
-        "Theme", secondary=ThemeComplex.__tablename__, lazy="select"
+        "Theme",
+        secondary=ThemeComplex.__tablename__,
+        lazy="select",
+        cascade="all, delete",
     )
