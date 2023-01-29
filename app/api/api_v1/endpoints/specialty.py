@@ -19,7 +19,10 @@ async def read_specialties(session: AsyncSession = Depends(deps.get_session)) ->
 async def create_specialty(
     specialty_in: schemas.SpecialtyCreate,
     session: AsyncSession = Depends(deps.get_session),
+    default: bool = True,
 ) -> Any:
+    if default:
+        return await crud.specialty.default_create(session=session, obj_in=specialty_in)
     return await crud.specialty.create(session=session, obj_in=specialty_in)
 
 
