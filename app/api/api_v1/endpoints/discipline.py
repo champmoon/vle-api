@@ -82,6 +82,10 @@ async def attach_plan(
 ) -> Any:
     discipline_out = await crud.discipline.get(session=session, id=discipline_id)
     if discipline_out:
+        file_id = discipline_out.plan
+        if file_id is not None:
+            await crud.file.remove(session=session, id=file_id)  # type: ignore
+
         await crud.discipline_with_plan.attach(
             session=session, id=discipline_id, plan=plan
         )

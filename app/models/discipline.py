@@ -12,7 +12,7 @@ class Discipline(Base):
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
     )
     name = Column(String, nullable=False)
-    plan = Column(UUID(as_uuid=True), ForeignKey("file.id", ondelete="CASCADE"))
+    plan = Column(UUID(as_uuid=True), ForeignKey("file.id", ondelete="SET NULL"))
 
     complexes: relationship = relationship(
         "Complex", secondary=ComplexDiscipline.__tablename__, lazy="select"
