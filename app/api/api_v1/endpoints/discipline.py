@@ -10,19 +10,25 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Discipline])
+@router.get("/", response_model=list[schemas.Discipline], tags=["disciplines"])
 async def read_disciplines(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.discipline_with_plan.get_multi(session=session)
 
 
-@router.get("/complexes/", response_model=list[schemas.DisciplineWithComplexes])
+@router.get(
+    "/complexes/",
+    response_model=list[schemas.DisciplineWithComplexes],
+    tags=["disciplines with complexes"],
+)
 async def read_disciplines_with_complexes(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.discipline_with_complexes.get_multi(session=session)
 
 
-@router.get("/{discipline_id}/", response_model=schemas.Discipline)
+@router.get(
+    "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
+)
 async def read_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -34,7 +40,9 @@ async def read_discipline(
     )
 
 
-@router.put("/{discipline_id}/", response_model=schemas.Discipline)
+@router.put(
+    "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
+)
 async def update_discipline(
     discipline_id: UUID,
     discipline_in: schemas.DisciplineUpdate,
@@ -50,7 +58,9 @@ async def update_discipline(
     )
 
 
-@router.delete("/{discipline_id}/", response_model=schemas.Discipline)
+@router.delete(
+    "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
+)
 async def delete_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -62,7 +72,9 @@ async def delete_discipline(
     )
 
 
-@router.post("/{discipline_id}/plan/", response_model=schemas.Discipline)
+@router.post(
+    "/{discipline_id}/plan/", response_model=schemas.Discipline, tags=["upload files"]
+)
 async def attach_plan(
     discipline_id: UUID,
     plan: UploadFile,
@@ -80,7 +92,9 @@ async def attach_plan(
 
 
 @router.get(
-    "/{discipline_id}/complexes/", response_model=schemas.DisciplineWithComplexes
+    "/{discipline_id}/complexes/",
+    response_model=schemas.DisciplineWithComplexes,
+    tags=["disciplines with complexes"],
 )
 async def read_discipline_with_complexes(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
@@ -96,7 +110,9 @@ async def read_discipline_with_complexes(
 
 
 @router.post(
-    "/specialies/{specialty_id}/", response_model=schemas.SpecialtyWithDisciplines
+    "/specialies/{specialty_id}/",
+    response_model=schemas.SpecialtyWithDisciplines,
+    tags=["disciplines"],
 )
 async def create_discipline(
     specialty_id: UUID,
@@ -116,7 +132,11 @@ async def create_discipline(
     )
 
 
-@router.get("/specialies/{specialty_id}/", response_model=list[schemas.Discipline])
+@router.get(
+    "/specialies/{specialty_id}/",
+    response_model=list[schemas.Discipline],
+    tags=["disciplines"],
+)
 async def read_disciplines_for_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

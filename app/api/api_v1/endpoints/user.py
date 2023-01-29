@@ -12,14 +12,14 @@ from app.crud.exceptions import RoleNotFound
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.User])
+@router.get("/", response_model=list[schemas.User], tags=["users"])
 async def read_users(
     skip: int = 0, limit: int = 100, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
     return await crud.user.get_multi(session=session, skip=skip, limit=limit)
 
 
-@router.post("/", response_model=schemas.User)
+@router.post("/", response_model=schemas.User, tags=["users"])
 async def create_user(
     user_in: schemas.UserCreate, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -50,7 +50,7 @@ async def create_user(
         )
 
 
-@router.put("/{user_id}/", response_model=schemas.User)
+@router.put("/{user_id}/", response_model=schemas.User, tags=["users"])
 async def update_user(
     user_id: UUID,
     user_in: schemas.UserUpdate,
@@ -64,7 +64,7 @@ async def update_user(
     )
 
 
-@router.delete("/{user_id}/", response_model=schemas.User)
+@router.delete("/{user_id}/", response_model=schemas.User, tags=["users"])
 async def delete_user(
     user_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -76,7 +76,7 @@ async def delete_user(
     )
 
 
-@router.get("/{user_id}/", response_model=schemas.User)
+@router.get("/{user_id}/", response_model=schemas.User, tags=["users"])
 async def read_user(
     user_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -88,7 +88,7 @@ async def read_user(
     )
 
 
-@router.get("/{email}/email/", response_model=schemas.User)
+@router.get("/{email}/email/", response_model=schemas.User, tags=["users"])
 async def read_user_by_email(
     email: EmailStr, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -100,7 +100,7 @@ async def read_user_by_email(
     )
 
 
-@router.get("/{username}/username/", response_model=schemas.User)
+@router.get("/{username}/username/", response_model=schemas.User, tags=["users"])
 async def read_user_by_username(
     username: str, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

@@ -10,19 +10,21 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Theme])
+@router.get("/", response_model=list[schemas.Theme], tags=["themes"])
 async def read_themes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.theme.get_multi(session=session)
 
 
-@router.get("/files/", response_model=list[schemas.ThemeWithFiles])
+@router.get(
+    "/files/", response_model=list[schemas.ThemeWithFiles], tags=["themes with files"]
+)
 async def read_themes_with_files(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.theme_with_files.get_multi(session=session)
 
 
-@router.put("/{theme_id}/", response_model=schemas.Theme)
+@router.put("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
 async def update_theme(
     theme_id: UUID,
     theme_in: schemas.ThemeUpdate,
@@ -38,7 +40,7 @@ async def update_theme(
     )
 
 
-@router.delete("/{theme_id}/", response_model=schemas.Theme)
+@router.delete("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
 async def delete_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -56,7 +58,7 @@ async def delete_theme(
     )
 
 
-@router.get("/{theme_id}/", response_model=schemas.Theme)
+@router.get("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
 async def read_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -68,7 +70,11 @@ async def read_theme(
     )
 
 
-@router.get("/{theme_id}/files/", response_model=schemas.ThemeWithFiles)
+@router.get(
+    "/{theme_id}/files/",
+    response_model=schemas.ThemeWithFiles,
+    tags=["themes with files"],
+)
 async def read_theme_with_files(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -80,7 +86,9 @@ async def read_theme_with_files(
     )
 
 
-@router.post("/{theme_id}/files/", response_model=schemas.ThemeWithFiles)
+@router.post(
+    "/{theme_id}/files/", response_model=schemas.ThemeWithFiles, tags=["upload files"]
+)
 async def upload_files_for_theme(
     theme_id: UUID,
     files: list[UploadFile],
@@ -97,7 +105,9 @@ async def upload_files_for_theme(
     )
 
 
-@router.get("/complexes/{complex_id}/", response_model=list[schemas.Theme])
+@router.get(
+    "/complexes/{complex_id}/", response_model=list[schemas.Theme], tags=["themes"]
+)
 async def read_themes_for_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -111,7 +121,11 @@ async def read_themes_for_complex(
     )
 
 
-@router.post("/complexes/{complex_id}/", response_model=schemas.ComplexWithThemes)
+@router.post(
+    "/complexes/{complex_id}/",
+    response_model=schemas.ComplexWithThemes,
+    tags=["themes"],
+)
 async def create_theme(
     complex_id: UUID,
     theme_in: schemas.ThemeCreate,

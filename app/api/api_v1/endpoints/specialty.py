@@ -10,12 +10,12 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Specialty])
+@router.get("/", response_model=list[schemas.Specialty], tags=["specialties"])
 async def read_specialties(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.specialty.get_multi(session=session)
 
 
-@router.post("/", response_model=schemas.Specialty)
+@router.post("/", response_model=schemas.Specialty, tags=["specialties"])
 async def create_specialty(
     specialty_in: schemas.SpecialtyCreate,
     session: AsyncSession = Depends(deps.get_session),
@@ -23,21 +23,29 @@ async def create_specialty(
     return await crud.specialty.create(session=session, obj_in=specialty_in)
 
 
-@router.get("/files/", response_model=list[schemas.SpecialtyWithFiles])
+@router.get(
+    "/files/",
+    response_model=list[schemas.SpecialtyWithFiles],
+    tags=["specialties with files"],
+)
 async def read_specialties_with_files(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.specialty_with_files.get_multi(session=session)
 
 
-@router.get("/disciplines/", response_model=list[schemas.SpecialtyWithDisciplines])
+@router.get(
+    "/disciplines/",
+    response_model=list[schemas.SpecialtyWithDisciplines],
+    tags=["specialties with disciplines"],
+)
 async def read_specialties_with_disciplines(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.specialty_with_disciplines.get_multi(session=session)
 
 
-@router.get("/{specialty_id}/", response_model=schemas.Specialty)
+@router.get("/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"])
 async def read_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -49,7 +57,7 @@ async def read_specialty(
     )
 
 
-@router.put("/{specialty_id}/", response_model=schemas.Specialty)
+@router.put("/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"])
 async def update_specialty(
     specialty_id: UUID,
     specialty_in: schemas.SpecialtyUpdate,
@@ -65,7 +73,9 @@ async def update_specialty(
     )
 
 
-@router.delete("/{specialty_id}/", response_model=schemas.Specialty)
+@router.delete(
+    "/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"]
+)
 async def delete_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -83,7 +93,11 @@ async def delete_specialty(
     )
 
 
-@router.get("/{specialty_id}/files/", response_model=schemas.SpecialtyWithFiles)
+@router.get(
+    "/{specialty_id}/files/",
+    response_model=schemas.SpecialtyWithFiles,
+    tags=["specialties with files"],
+)
 async def read_specialty_with_files(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -97,7 +111,11 @@ async def read_specialty_with_files(
     )
 
 
-@router.post("/{specialty_id}/files/", response_model=schemas.SpecialtyWithFiles)
+@router.post(
+    "/{specialty_id}/files/",
+    response_model=schemas.SpecialtyWithFiles,
+    tags=["upload files"],
+)
 async def upload_files_for_specialty(
     specialty_id: UUID,
     files: list[UploadFile],
@@ -115,7 +133,9 @@ async def upload_files_for_specialty(
 
 
 @router.get(
-    "/{specialty_id}/disciplines/", response_model=schemas.SpecialtyWithDisciplines
+    "/{specialty_id}/disciplines/",
+    response_model=schemas.SpecialtyWithDisciplines,
+    tags=["specialties with disciplines"],
 )
 async def read_specialty_with_disciplines(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)

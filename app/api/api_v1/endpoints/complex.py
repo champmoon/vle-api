@@ -10,19 +10,23 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Complex])
+@router.get("/", response_model=list[schemas.Complex], tags=["complexes"])
 async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.complex.get_multi(session=session)
 
 
-@router.get("/themes/", response_model=list[schemas.ComplexWithThemes])
+@router.get(
+    "/themes/",
+    response_model=list[schemas.ComplexWithThemes],
+    tags=["complexes with themes"],
+)
 async def read_complexes_with_themes(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
     return await crud.complex_with_themes.get_multi(session=session)
 
 
-@router.get("/{complex_id}/", response_model=schemas.Complex)
+@router.get("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
 async def read_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -34,7 +38,7 @@ async def read_complex(
     )
 
 
-@router.put("/{complex_id}/", response_model=schemas.Complex)
+@router.put("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
 async def update_complex(
     complex_id: UUID,
     complex_in: schemas.ComplexUpdate,
@@ -50,7 +54,7 @@ async def update_complex(
     )
 
 
-@router.delete("/{complex_id}/", response_model=schemas.Complex)
+@router.delete("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
 async def delete_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -62,7 +66,11 @@ async def delete_complex(
     )
 
 
-@router.get("/{complex_id}/themes/", response_model=schemas.ComplexWithThemes)
+@router.get(
+    "/{complex_id}/themes/",
+    response_model=schemas.ComplexWithThemes,
+    tags=["complexes with themes"],
+)
 async def read_complex_with_themes(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -74,7 +82,11 @@ async def read_complex_with_themes(
     )
 
 
-@router.get("/disciplines/{discipline_id}/", response_model=list[schemas.Complex])
+@router.get(
+    "/disciplines/{discipline_id}/",
+    response_model=list[schemas.Complex],
+    tags=["complexes"],
+)
 async def read_complexes_for_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -89,7 +101,9 @@ async def read_complexes_for_discipline(
 
 
 @router.post(
-    "/disciplines/{discipline_id}/", response_model=schemas.DisciplineWithComplexes
+    "/disciplines/{discipline_id}/",
+    response_model=schemas.DisciplineWithComplexes,
+    tags=["complexes"],
 )
 async def create_complex(
     discipline_id: UUID,
