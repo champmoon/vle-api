@@ -28,5 +28,9 @@ class Discipline(DisciplineInDBBase):
     plan_file: File | None
 
 
+class DisciplineForSpecialty(DisciplineInDBBase):
+    plan: UUID | None
+
+
 class DisciplineWithComplexes(DisciplineInDBBase):
     complexes: list[Complex]

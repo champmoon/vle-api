@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from app.schemas.base import BaseSchema
-from app.schemas.discipline import Discipline
+from app.schemas.discipline import DisciplineForSpecialty
 from app.schemas.file import File
 
 
@@ -35,4 +35,4 @@ class SpecialtyWithFiles(SpecialtyInDBBase):
 
 
 class SpecialtyWithDisciplines(SpecialtyInDBBase):
-    disciplines: list[Discipline]
+    disciplines: list[DisciplineForSpecialty]

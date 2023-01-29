@@ -114,7 +114,7 @@ async def read_discipline_with_complexes(
 
 
 @router.post(
-    "/specialies/{specialty_id}/",
+    "/specialties/{specialty_id}/",
     response_model=schemas.SpecialtyWithDisciplines,
     tags=["disciplines"],
 )
@@ -137,7 +137,7 @@ async def create_discipline(
 
 
 @router.get(
-    "/specialies/{specialty_id}/",
+    "/specialties/{specialty_id}/",
     response_model=list[schemas.Discipline],
     tags=["disciplines"],
 )

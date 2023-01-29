@@ -19,7 +19,10 @@ async def read_specialties(session: AsyncSession = Depends(deps.get_session)) ->
 async def create_specialty(
     specialty_in: schemas.SpecialtyCreate,
     session: AsyncSession = Depends(deps.get_session),
+    default: bool = True,
 ) -> Any:
+    if default:
+        return await crud.specialty.default_create(session=session, obj_in=specialty_in)
     return await crud.specialty.create(session=session, obj_in=specialty_in)
 
 
@@ -123,7 +126,7 @@ async def upload_files_for_specialty(
 ) -> Any:
     specialty = await crud.specialty.get(session=session, id=specialty_id)
     if specialty:
-        await crud.file_for_specialty.create(
+        await crud.file_for_specialty.create_multi(
             session=session, files=files, specialty_id=specialty_id
         )
         return await crud.specialty_with_files.get(session=session, id=specialty_id)

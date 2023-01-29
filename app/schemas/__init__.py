@@ -2,6 +2,7 @@ from .complex import Complex, ComplexCreate, ComplexUpdate, ComplexWithThemes
 from .discipline import (
     Discipline,
     DisciplineCreate,
+    DisciplineForSpecialty,
     DisciplineUpdate,
     DisciplineWithComplexes,
 )
