@@ -32,7 +32,9 @@ class CRUDSpecialty(CRUDBase[Specialty, SpecialtyCreate, SpecialtyUpdate]):
             discipline_in = DisciplineCreate(name=discipline_name)
 
             discipline_id = await crud.discipline_for_specialty.create(
-                session=session, discipline_in=discipline_in, specialty_id=specialty_id  # type: ignore
+                session=session,
+                discipline_in=discipline_in,
+                specialty_id=specialty_id,  # type: ignore
             )
 
             complexes_for_discipline = discipline_for_specialty["complexes"]
