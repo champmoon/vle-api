@@ -20,4 +20,6 @@ class Discipline(Base):
         lazy="select",
         cascade="all, delete",
     )
-    plan_file: relationship = relationship("File", foreign_keys=[plan])
+    plan_file: relationship = relationship(
+        "File", foreign_keys=[plan], cascade="all, delete"
+    )

@@ -46,12 +46,6 @@ async def delete_theme(
 ) -> Any:
     theme_out = await crud.theme.get(session=session, id=theme_id)
     if theme_out:
-        related_files = await crud.file_for_themes.get_for_theme(
-            session=session, theme_id=theme_out.id  # type: ignore
-        )
-
-        await crud.file.remove_multi(session=session, files=related_files)
-
         return await crud.theme.remove(session=session, id=theme_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No theme with this id"

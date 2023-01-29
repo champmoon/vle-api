@@ -17,7 +17,10 @@ class Specialty(Base):
     year = Column(Integer, nullable=False)
 
     files: relationship = relationship(
-        "File", secondary=SpecialtyFile.__tablename__, lazy="select"
+        "File",
+        secondary=SpecialtyFile.__tablename__,
+        lazy="select",
+        cascade="all, delete",
     )
     disciplines: relationship = relationship(
         "Discipline",
