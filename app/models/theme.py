@@ -14,5 +14,8 @@ class Theme(Base):
     name = Column(String, nullable=False)
 
     files: relationship = relationship(
-        "File", secondary=FileTheme.__tablename__, lazy="select"
+        "File",
+        secondary=FileTheme.__tablename__,
+        lazy="select",
+        cascade="all, delete",
     )

@@ -84,12 +84,6 @@ async def delete_specialty(
 ) -> Any:
     specialty_out = await crud.specialty.get(session=session, id=specialty_id)
     if specialty_out:
-        related_files = await crud.file_for_specialty.get_for_specialty(
-            session=session, specialty_id=specialty_out.id  # type: ignore
-        )
-
-        await crud.file.remove_multi(session=session, files=related_files)
-
         return await crud.specialty.remove(session=session, id=specialty_id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No specialty with this id"

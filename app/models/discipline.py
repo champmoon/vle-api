@@ -15,6 +15,11 @@ class Discipline(Base):
     plan = Column(UUID(as_uuid=True), ForeignKey("file.id", ondelete="SET NULL"))
 
     complexes: relationship = relationship(
-        "Complex", secondary=ComplexDiscipline.__tablename__, lazy="select"
+        "Complex",
+        secondary=ComplexDiscipline.__tablename__,
+        lazy="select",
+        cascade="all, delete",
     )
-    plan_file: relationship = relationship("File", foreign_keys=[plan])
+    plan_file: relationship = relationship(
+        "File", foreign_keys=[plan], cascade="all, delete"
+    )

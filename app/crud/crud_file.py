@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
 from fastapi import UploadFile
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase, RelationshipBase
@@ -9,26 +10,13 @@ from app.models import File, FileTheme, Specialty, SpecialtyFile, Theme
 from app.schemas import FileCreate, FileUpdate
 
 
+@event.listens_for(File, "after_delete")
+def receive_after_delete(mapper, connection, target) -> None:  # type: ignore
+    SystemFile(dir_path=str(target.id)).delete()
+
+
 class CRUDFile(CRUDBase[File, FileCreate, FileUpdate]):
-    async def remove(self, session: AsyncSession, id: UUID) -> File:
-        file_obj = await super().remove(session, id)
-
-        SystemFile(dir_path=str(file_obj.id)).delete()
-
-        return file_obj
-
-    async def remove_multi(
-        self, session: AsyncSession, files: list[File] | None
-    ) -> None:
-        if files:
-            for file_out in files:
-                file_id = file_out.id
-
-                SystemFile(dir_path=str(file_id)).delete()
-
-                await super().remove_flush(session=session, id=file_id)  # type: ignore
-
-            await session.commit()
+    ...
 
 
 class RelationshipForSpecialty(RelationshipBase[File, SpecialtyFile, FileCreate]):
