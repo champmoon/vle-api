@@ -5,14 +5,17 @@ set -e
 # Activate our virtual environment here
 . /opt/pysetup/.venv/bin/activate
 
-# Run backend_pre_start.py
-PYTHONPATH=. python app/backend_pre_start.py
+export PYTHONPATH=.
+
+# Run pre_start script: check health for db
+python app/scripts/pre_start/check_health.py
 
 # Run migrations
 alembic upgrade head
 
-# Run initial_data.py
-PYTHONPATH=. python app/initial_data.py
+# Run other pre start scripts, order matters!!!
+python app/scripts/pre_start/create_roles.py
+python app/scripts/pre_start/create_super_user.py
 
 # Evaluating passed command:
 exec "$@"

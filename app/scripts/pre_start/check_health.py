@@ -11,7 +11,8 @@ from tenacity.wait import wait_fixed
 from app.db.session import async_engine
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger("pre_start/check-health")
 
 max_tries = 60 * 5  # 5 minutes
 wait_seconds = 1
@@ -23,22 +24,18 @@ wait_seconds = 1
     before=before_log(logger, logging.INFO),
     after=after_log(logger, logging.WARN),
 )
-async def init() -> None:
+async def health() -> None:
     try:
         async with async_engine.connect() as conn:
-            result = await conn.execute(sa.text("SELECT * FROM user;"))
-            logger.info(result.fetchall())
+            await conn.execute(sa.text("SELECT * FROM user;"))
+            logger.info("ok...")
         await async_engine.dispose()
+
     except Exception as e:
+        logger.info("error...")
         logger.error(e)
         raise e
 
 
-async def main() -> None:
-    logger.info("Initializing service")
-    await init()
-    logger.info("Service finished initializing")
-
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(health())
