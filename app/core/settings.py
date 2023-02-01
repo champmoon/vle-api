@@ -41,8 +41,9 @@ class Settings(BaseSettings):
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
 
-    FIRST_ADMIN_USERNAME: str
-    FIRST_ADMIN_PASSWORD: str
+    SUPER_USER_USERNAME: str
+    SUPER_USER_PASSWORD: str
+    SUPER_USER_EMAIL: str
 
     STATIC_FILES_DIR: str
 
