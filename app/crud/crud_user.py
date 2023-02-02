@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud import role
 from app.crud.base import CRUDBase
 from app.crud.exceptions import RoleNotFound
+from app.lib.hash import Hasher
 from app.models import User
 from app.schemas import UserCreate, UserUpdate
-from app.utils import get_password_hash
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -23,9 +23,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if role_obj is None:
             raise RoleNotFound
 
-        obj_in_data["hashed_password"] = await get_password_hash(
-            obj_in_data.pop("password")
-        )
+        obj_in_data["hashed_password"] = Hasher(obj_in_data.pop("password")).get()
 
         obj_in_data["is_active"] = False
         obj_in_data["created_at"] = datetime.utcnow()
@@ -50,7 +48,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         password = update_data.pop("password", None)
 
         if password:
-            hashed_password = await get_password_hash(password)
+            hashed_password = Hasher(password).get()
             update_data["hashed_password"] = hashed_password
 
         return await super().update(session=session, db_obj=db_obj, obj_in=update_data)
