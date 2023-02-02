@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from app.core.settings import settings
-from app.lib.files.exceptions import FileNotExist
+from app.libs.files.exceptions import FileNotExist
 
 
 class SystemFile:

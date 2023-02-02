@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase, RelationshipBase
 from app.crud.crud_file import file as crud_file
-from app.lib.files import SystemFile
+from app.libs.files import SystemFile
 from app.models import ComplexDiscipline, Discipline, Specialty
 from app.models.discipline_specialty import DisciplineSpecialty
 from app.schemas import DisciplineCreate, DisciplineUpdate, FileCreate
