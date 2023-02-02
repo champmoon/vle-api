@@ -3,11 +3,9 @@ import subprocess
 from black import main as black
 from isort import main as isort
 
-from app.scripts.tools.settings import settings
-
 
 def main() -> None:
-    folders = settings.FOLDERS_FOR_FORMATTING
+    folders = ["app"]
 
     isort.main([*folders, "--force-single-line-imports"])
     subprocess.run(

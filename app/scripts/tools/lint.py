@@ -5,11 +5,9 @@ from flake8 import __main__ as flake8
 from isort import main as isort
 from mypy import main as mypy
 
-from app.scripts.tools.settings import settings
-
 
 def main() -> None:
-    folders = settings.FOLDERS_FOR_LINTING
+    folders = ["app"]
 
     print("\nFlake8:")
     flake8.main([*folders, "--exit-zero"])
