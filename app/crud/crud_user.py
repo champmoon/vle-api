@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Any
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
@@ -7,10 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import role
 from app.crud.base import CRUDBase
-from app.crud.exceptions import RoleNotFound
 from app.libs.hash import Hasher
 from app.models import User
-from app.schemas import UserCreate, UserUpdate
+from app.schemas import RoleEnum, UserCreate, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -20,8 +18,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         role_obj = await role.get_by_name(
             session=session, role_name=obj_in_data.pop("role_name")
         )
-        if role_obj is None:
-            raise RoleNotFound
 
         obj_in_data["hashed_password"] = Hasher(obj_in_data.pop("password")).get()
 
@@ -38,12 +34,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db_obj
 
     async def update(
-        self, session: AsyncSession, db_obj: User, obj_in: UserUpdate | dict[str, Any]
+        self, session: AsyncSession, db_obj: User, obj_in: UserUpdate
     ) -> User:
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
+        update_data = obj_in.dict(exclude_unset=True)
 
         password = update_data.pop("password", None)
 
@@ -51,7 +44,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             hashed_password = Hasher(password).get()
             update_data["hashed_password"] = hashed_password
 
-        return await super().update(session=session, db_obj=db_obj, obj_in=update_data)
+        return await super().update(
+            session=session, db_obj=db_obj, obj_in=UserUpdate(**update_data)
+        )
 
     async def get_by_username(
         self, session: AsyncSession, username: str
@@ -66,6 +61,22 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             select(self.model).where(self.model.email == email)
         )
         return user.scalars().first()
+
+    async def get_multi_by_role(
+        self,
+        session: AsyncSession,
+        role_name: RoleEnum,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> list[User] | None:
+        role_obj = await role.get_by_name(session=session, role_name=role_name)
+        users_objs = await session.execute(
+            select(self.model)
+            .where(self.model.role_id == role_obj.id)
+            .offset(skip)
+            .limit(limit),
+        )
+        return users_objs.scalars().all()
 
 
 user = CRUDUser(User)
