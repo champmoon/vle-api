@@ -14,7 +14,7 @@ async def create_roles() -> None:
     async with async_session() as session:
 
         for role in RoleEnum:
-            role_name = role.name
+            role_name = role.value
 
             role_obj = await crud.role.get_by_name(session=session, role_name=role_name)
 
