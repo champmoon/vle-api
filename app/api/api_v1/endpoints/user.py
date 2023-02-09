@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
-from app.crud.exceptions import RoleNotFound
 
 router = APIRouter()
 
@@ -41,13 +40,8 @@ async def create_user(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Already exists user with this email",
             )
-    try:
-        return await crud.user.create(session=session, obj_in=user_in)
-    except RoleNotFound:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal error with create user",
-        )
+
+    return await crud.user.create(session=session, obj_in=user_in)
 
 
 @router.put("/{user_id}/", response_model=schemas.User, tags=["users"])
