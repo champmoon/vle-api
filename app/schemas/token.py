@@ -4,6 +4,11 @@ from app.schemas import RoleEnum
 from app.schemas.base import BaseSchema
 
 
-class Token(BaseSchema):
-    user_id: UUID
+class TokenData(BaseSchema):
+    user_id: str
     role: RoleEnum
+
+
+class TokensOut(BaseSchema):
+    access_token: str
+    refresh_token: str
