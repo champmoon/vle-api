@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from app.schemas import RoleEnum
 from app.schemas.base import BaseSchema
 
@@ -12,3 +10,7 @@ class TokenData(BaseSchema):
 class TokensOut(BaseSchema):
     access_token: str
     refresh_token: str
+
+
+class OneTokenOut(BaseSchema):
+    token: str

@@ -70,6 +70,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         limit: int = 100,
     ) -> list[User] | None:
         role_obj = await role.get_by_name(session=session, role_name=role_name)
+
         users_objs = await session.execute(
             select(self.model)
             .where(self.model.role_id == role_obj.id)

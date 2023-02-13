@@ -11,7 +11,7 @@ class CRUDRole(CRUDBase[Role, RoleCreate, RoleUpdate]):
         obj = await session.execute(
             select(self.model).where(self.model.name == role_name)
         )
-        return obj.scalars().one()
+        return obj.scalars().first()  # type: ignore
 
 
 role = CRUDRole(Role)

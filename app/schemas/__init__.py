@@ -1,3 +1,4 @@
+from .auth import Login
 from .complex import Complex, ComplexCreate, ComplexUpdate, ComplexWithThemes
 from .discipline import (
     Discipline,
@@ -16,6 +17,5 @@ from .specialty import (
     SpecialtyWithFiles,
 )
 from .theme import Theme, ThemeCreate, ThemeUpdate, ThemeWithFiles
+from .token import OneTokenOut, TokenData, TokensOut
 from .user import User, UserCreate, UserUpdate
-from .auth import Login
-from .token import TokenData, TokensOut
