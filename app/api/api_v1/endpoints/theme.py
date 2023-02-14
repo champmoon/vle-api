@@ -124,25 +124,6 @@ async def read_themes_for_complex(
     )
 
 
-@router.get(
-    "/complexes/{complex_id}/files/",
-    response_model=list[schemas.ThemeWithFiles],
-    tags=["themes with files"],
-)
-@deps.auth_required(roles=RoleScope.all())
-async def read_themes_for_complex_with_files(
-    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
-) -> Any:
-    complex_out = await crud.complex.get(session=session, id=complex_id)
-    if complex_out:
-        return await crud.theme_for_complex.get_for_complex(
-            session=session, complex_id=complex_id
-        )
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
-    )
-
-
 @router.post(
     "/complexes/{complex_id}/",
     response_model=schemas.ComplexWithThemes,
@@ -159,6 +140,25 @@ async def create_theme(
             session=session, theme_in=theme_in, complex_id=complex_id
         )
         return await crud.complex_with_themes.get(session=session, id=complex_id)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
+@router.get(
+    "/complexes/{complex_id}/files/",
+    response_model=list[schemas.ThemeWithFiles],
+    tags=["themes with files"],
+)
+@deps.auth_required(roles=RoleScope.all())
+async def read_themes_for_complex_with_files(
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    complex_out = await crud.complex.get(session=session, id=complex_id)
+    if complex_out:
+        return await crud.theme_for_complex.get_for_complex(
+            session=session, complex_id=complex_id
+        )
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
     )
