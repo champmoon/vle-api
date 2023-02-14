@@ -1,1 +1,1 @@
-from .tokens import JWTTokens
+from .tokens import JWTTokensManager
