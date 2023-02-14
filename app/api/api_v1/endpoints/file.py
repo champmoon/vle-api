@@ -6,16 +6,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.File], tags=["files"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_files(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.file.get_multi(session=session)
 
 
 @router.delete("/{file_id}/", response_model=schemas.File, tags=["files"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_file(
     file_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -28,6 +31,7 @@ async def delete_file(
 
 
 @router.get("/{file_id}/", response_model=schemas.File, tags=["files"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_file(
     file_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -40,6 +44,7 @@ async def read_file(
 
 
 @router.get("/themes/{theme_id}/", response_model=list[schemas.File], tags=["files"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_files_for_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -56,6 +61,7 @@ async def read_files_for_theme(
 @router.get(
     "/specialties/{specialty_id}/", response_model=list[schemas.File], tags=["files"]
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_files_for_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

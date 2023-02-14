@@ -6,16 +6,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.Specialty], tags=["specialties"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialties(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.specialty.get_multi(session=session)
 
 
 @router.post("/", response_model=schemas.Specialty, tags=["specialties"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def create_specialty(
     specialty_in: schemas.SpecialtyCreate,
     session: AsyncSession = Depends(deps.get_session),
@@ -31,6 +34,7 @@ async def create_specialty(
     response_model=list[schemas.SpecialtyWithFiles],
     tags=["specialties with files"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialties_with_files(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
@@ -42,6 +46,7 @@ async def read_specialties_with_files(
     response_model=list[schemas.SpecialtyWithDisciplines],
     tags=["specialties with disciplines"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialties_with_disciplines(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
@@ -49,6 +54,7 @@ async def read_specialties_with_disciplines(
 
 
 @router.get("/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -61,6 +67,7 @@ async def read_specialty(
 
 
 @router.put("/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def update_specialty(
     specialty_id: UUID,
     specialty_in: schemas.SpecialtyUpdate,
@@ -79,6 +86,7 @@ async def update_specialty(
 @router.delete(
     "/{specialty_id}/", response_model=schemas.Specialty, tags=["specialties"]
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -95,6 +103,7 @@ async def delete_specialty(
     response_model=schemas.SpecialtyWithFiles,
     tags=["specialties with files"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialty_with_files(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -113,6 +122,7 @@ async def read_specialty_with_files(
     response_model=schemas.SpecialtyWithFiles,
     tags=["upload files"],
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def upload_files_for_specialty(
     specialty_id: UUID,
     files: list[UploadFile],
@@ -134,6 +144,7 @@ async def upload_files_for_specialty(
     response_model=schemas.SpecialtyWithDisciplines,
     tags=["specialties with disciplines"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_specialty_with_disciplines(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

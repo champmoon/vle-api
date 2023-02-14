@@ -6,11 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.Theme], tags=["themes"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_themes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.theme.get_multi(session=session)
 
@@ -18,6 +20,7 @@ async def read_themes(session: AsyncSession = Depends(deps.get_session)) -> Any:
 @router.get(
     "/files/", response_model=list[schemas.ThemeWithFiles], tags=["themes with files"]
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_themes_with_files(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
@@ -25,6 +28,7 @@ async def read_themes_with_files(
 
 
 @router.put("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def update_theme(
     theme_id: UUID,
     theme_in: schemas.ThemeUpdate,
@@ -41,6 +45,7 @@ async def update_theme(
 
 
 @router.delete("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -53,6 +58,7 @@ async def delete_theme(
 
 
 @router.get("/{theme_id}/", response_model=schemas.Theme, tags=["themes"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_theme(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -69,6 +75,7 @@ async def read_theme(
     response_model=schemas.ThemeWithFiles,
     tags=["themes with files"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_theme_with_files(
     theme_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -83,6 +90,7 @@ async def read_theme_with_files(
 @router.post(
     "/{theme_id}/files/", response_model=schemas.ThemeWithFiles, tags=["upload files"]
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def upload_files_for_theme(
     theme_id: UUID,
     files: list[UploadFile],
@@ -102,7 +110,27 @@ async def upload_files_for_theme(
 @router.get(
     "/complexes/{complex_id}/", response_model=list[schemas.Theme], tags=["themes"]
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_themes_for_complex(
+    complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
+) -> Any:
+    complex_out = await crud.complex.get(session=session, id=complex_id)
+    if complex_out:
+        return await crud.theme_for_complex.get_for_complex(
+            session=session, complex_id=complex_id
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="No complex with this id"
+    )
+
+
+@router.get(
+    "/complexes/{complex_id}/files/",
+    response_model=list[schemas.ThemeWithFiles],
+    tags=["themes with files"],
+)
+@deps.auth_required(roles=RoleScope.all())
+async def read_themes_for_complex_with_files(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
     complex_out = await crud.complex.get(session=session, id=complex_id)

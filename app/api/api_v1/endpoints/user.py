@@ -7,11 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.User], tags=["users"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_users(
     skip: int = 0, limit: int = 100, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -19,6 +21,7 @@ async def read_users(
 
 
 @router.post("/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def create_user(
     user_in: schemas.UserCreate, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -45,6 +48,7 @@ async def create_user(
 
 
 @router.put("/{user_id}/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def update_user(
     user_id: UUID,
     user_in: schemas.UserUpdate,
@@ -59,6 +63,7 @@ async def update_user(
 
 
 @router.delete("/{user_id}/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_user(
     user_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -71,6 +76,7 @@ async def delete_user(
 
 
 @router.get("/{user_id}/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_user(
     user_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -83,6 +89,7 @@ async def read_user(
 
 
 @router.get("/{email}/email/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_user_by_email(
     email: EmailStr, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -95,6 +102,7 @@ async def read_user_by_email(
 
 
 @router.get("/{username}/username/", response_model=schemas.User, tags=["users"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_user_by_username(
     username: str, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
