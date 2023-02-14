@@ -1,4 +1,5 @@
 tags_metadata = [
+    {"name": "auth", "description": "Authorization for users"},
     {"name": "roles", "description": "list of all user roles"},
     {"name": "users", "description": "CRUD operations for users"},
     {"name": "specialties", "description": "CRUD operations for specialties"},
