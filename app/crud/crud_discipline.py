@@ -15,7 +15,13 @@ from app.schemas import DisciplineCreate, DisciplineUpdate, FileCreate
 
 
 class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
-    async def get_disciplines_for_specialty(
+    ...
+
+
+class RelationshipForSpecialty(
+    RelationshipBase[Discipline, DisciplineSpecialty, DisciplineCreate]
+):
+    async def get_for_specialty(
         self, session: AsyncSession, specialty_id: UUID
     ) -> list[Discipline] | None:
         disciplines = await session.execute(
@@ -25,19 +31,6 @@ class CRUDDiscipline(CRUDBase[Discipline, DisciplineCreate, DisciplineUpdate]):
             .options(selectinload(Discipline.plan_file))
         )
         return disciplines.scalars().all()
-
-
-class RelationshipForSpecialty(
-    RelationshipBase[Discipline, DisciplineSpecialty, DisciplineCreate]
-):
-    async def get_for_specialty(
-        self, session: AsyncSession, specialty_id: UUID
-    ) -> list[Discipline] | None:
-        return await self.get_for(
-            session=session,
-            m2m_parent_field=DisciplineSpecialty.specialty_id,
-            parent_uuid=specialty_id,
-        )
 
     async def create(
         self, session: AsyncSession, discipline_in: DisciplineCreate, specialty_id: UUID
