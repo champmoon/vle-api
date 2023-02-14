@@ -1,11 +1,10 @@
+import json
 from datetime import datetime, timedelta
 
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 
 from app.core.settings import settings
-
-import json
 
 
 class JWTTokensManager:
