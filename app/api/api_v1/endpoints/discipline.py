@@ -6,11 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.Discipline], tags=["disciplines"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_disciplines(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.discipline_with_plan.get_multi(session=session)
 
@@ -20,6 +22,7 @@ async def read_disciplines(session: AsyncSession = Depends(deps.get_session)) ->
     response_model=list[schemas.DisciplineWithComplexes],
     tags=["disciplines with complexes"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_disciplines_with_complexes(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
@@ -29,6 +32,7 @@ async def read_disciplines_with_complexes(
 @router.get(
     "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -43,6 +47,7 @@ async def read_discipline(
 @router.put(
     "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def update_discipline(
     discipline_id: UUID,
     discipline_in: schemas.DisciplineUpdate,
@@ -61,6 +66,7 @@ async def update_discipline(
 @router.delete(
     "/{discipline_id}/", response_model=schemas.Discipline, tags=["disciplines"]
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -75,6 +81,7 @@ async def delete_discipline(
 @router.post(
     "/{discipline_id}/plan/", response_model=schemas.Discipline, tags=["upload files"]
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def attach_plan(
     discipline_id: UUID,
     plan: UploadFile,
@@ -100,6 +107,7 @@ async def attach_plan(
     response_model=schemas.DisciplineWithComplexes,
     tags=["disciplines with complexes"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_discipline_with_complexes(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -118,6 +126,7 @@ async def read_discipline_with_complexes(
     response_model=schemas.SpecialtyWithDisciplines,
     tags=["disciplines"],
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def create_discipline(
     specialty_id: UUID,
     discipline_in: schemas.DisciplineCreate,
@@ -138,9 +147,10 @@ async def create_discipline(
 
 @router.get(
     "/specialties/{specialty_id}/",
-    response_model=list[schemas.Discipline],
+    response_model=list[schemas.DisciplineForSpecialty],
     tags=["disciplines"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_disciplines_for_specialty(
     specialty_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:

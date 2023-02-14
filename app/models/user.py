@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
 from app.db.base_class import Base
@@ -20,3 +21,7 @@ class User(Base):
     is_active = Column(Boolean(), default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     role_id = Column(UUID(as_uuid=True), ForeignKey("role.id", ondelete="CASCADE"))
+
+    role: relationship = relationship(
+        "Role", foreign_keys=[role_id], cascade="all, delete"
+    )

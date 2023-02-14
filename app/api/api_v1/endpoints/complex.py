@@ -6,11 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
 from app.api import deps
+from app.libs import RoleScope
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[schemas.Complex], tags=["complexes"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> Any:
     return await crud.complex.get_multi(session=session)
 
@@ -20,6 +22,7 @@ async def read_complexes(session: AsyncSession = Depends(deps.get_session)) -> A
     response_model=list[schemas.ComplexWithThemes],
     tags=["complexes with themes"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_complexes_with_themes(
     session: AsyncSession = Depends(deps.get_session),
 ) -> Any:
@@ -27,6 +30,7 @@ async def read_complexes_with_themes(
 
 
 @router.get("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
+@deps.auth_required(roles=RoleScope.all())
 async def read_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -39,6 +43,7 @@ async def read_complex(
 
 
 @router.put("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def update_complex(
     complex_id: UUID,
     complex_in: schemas.ComplexUpdate,
@@ -55,6 +60,7 @@ async def update_complex(
 
 
 @router.delete("/{complex_id}/", response_model=schemas.Complex, tags=["complexes"])
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def delete_complex(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -71,6 +77,7 @@ async def delete_complex(
     response_model=schemas.ComplexWithThemes,
     tags=["complexes with themes"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_complex_with_themes(
     complex_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -87,6 +94,7 @@ async def read_complex_with_themes(
     response_model=list[schemas.Complex],
     tags=["complexes"],
 )
+@deps.auth_required(roles=RoleScope.all())
 async def read_complexes_for_discipline(
     discipline_id: UUID, session: AsyncSession = Depends(deps.get_session)
 ) -> Any:
@@ -105,6 +113,7 @@ async def read_complexes_for_discipline(
     response_model=schemas.DisciplineWithComplexes,
     tags=["complexes"],
 )
+@deps.auth_required(roles=RoleScope.exclude("STUDENT"))
 async def create_complex(
     discipline_id: UUID,
     complex_in: schemas.ComplexCreate,

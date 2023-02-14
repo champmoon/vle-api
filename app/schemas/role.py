@@ -6,6 +6,8 @@ from app.schemas.base import BaseSchema
 
 class RoleEnum(str, Enum):
     ADMIN = "ADMIN"
+    TEACHER = "TEACHER"
+    STUDENT = "STUDENT"
 
 
 class RoleBase(BaseSchema):

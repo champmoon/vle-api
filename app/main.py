@@ -22,8 +22,8 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
+    allow_origins=["http://frontend.eiee.host:5000"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH"],
     allow_headers=["*"],
 )

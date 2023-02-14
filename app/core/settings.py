@@ -41,8 +41,15 @@ class Settings(BaseSettings):
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
 
-    FIRST_ADMIN_USERNAME: str
-    FIRST_ADMIN_PASSWORD: str
+    SUPER_USER_USERNAME: str
+    SUPER_USER_PASSWORD: str
+    SUPER_USER_EMAIL: str
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # 30 minutes
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    ALGORITHM: str = "HS256"
+    JWT_SECRET_KEY: str
+    JWT_REFRESH_SECRET_KEY: str
 
     STATIC_FILES_DIR: str
 
