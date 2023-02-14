@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import role
 from app.crud.base import CRUDBase
-from app.libs.hash import Hasher
+from app.libs import Hasher
 from app.models import User
 from app.schemas import RoleEnum, UserCreate, UserUpdate
 
